@@ -110,7 +110,7 @@ export class ProblemsService {
       .order('like_count', { ascending: false });
 
     // 4. Check if current user liked solutions
-    let userLikedSolutionIds = new Set<string>();
+    const userLikedSolutionIds = new Set<string>();
     if (currentUserId && solutions && solutions.length > 0) {
       const solutionIds = solutions.map((s) => s.id);
       const { data: userLikes } = await supabase

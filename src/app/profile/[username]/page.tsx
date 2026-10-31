@@ -1,63 +1,109 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { use, useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { api } from '@/lib/api';
 import { PublicProfileResponse } from '@/types/api.types';
-import {
-  User,
-  Code2,
-  ArrowLeft,
-  Loader2,
-  ExternalLink,
-} from 'lucide-react';
+import { ProfileHeader, UserSolutions } from '@/components/profile';
 
-export default function ProfilePage() {
+interface ProfilePageProps {
+  params: Promise<{ username: string }>;
+}
+
+function ArrowLeftIcon({ className = 'w-3.5 h-3.5' }: { className?: string }) {
   return (
-    <Suspense
-      fallback={
-        <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-          <Loader2 className="w-8 h-8 text-rose-400 animate-spin mx-auto mb-3" />
-          <p className="text-sm text-slate-400">Loading builder profile...</p>
-        </div>
-      }
-    >
-      <ProfileContent />
-    </Suspense>
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+    </svg>
   );
 }
 
-function ProfileContent() {
-  const params = useParams();
-  const username = (params?.username as string) || 'alex_dev';
+function AlertTriangleIcon({ className = 'w-10 h-10' }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    </svg>
+  );
+}
+
+function ProfileContent({ rawUsername }: { rawUsername: string }) {
+  const cleanUsername = decodeURIComponent(rawUsername).trim();
 
   const [profile, setProfile] = useState<PublicProfileResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
     async function load() {
       setLoading(true);
+      setError(null);
       try {
-        const data = await api.getProfile(username);
-        setProfile(data);
+        const res = await fetch(`/api/profile/${encodeURIComponent(cleanUsername)}`);
+        if (res.status === 404) {
+          throw new Error('User profile not found.');
+        }
+        if (!res.ok) {
+          throw new Error(`Failed to load profile (HTTP ${res.status})`);
+        }
+        const json = await res.json();
+        if (!json.success || !json.data) {
+          throw new Error(json.error?.message || 'Failed to retrieve profile');
+        }
+        if (isMounted) {
+          setProfile(json.data);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : 'An error occurred while loading this profile.');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
     load();
-  }, [username]);
+    return () => {
+      isMounted = false;
+    };
+  }, [cleanUsername]);
 
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <Loader2 className="w-8 h-8 text-rose-400 animate-spin mx-auto mb-3" />
+        <svg className="w-8 h-8 text-rose-400 animate-spin mx-auto mb-3" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+        </svg>
         <p className="text-sm text-slate-400">Loading builder profile...</p>
       </div>
     );
   }
 
-  if (!profile) return null;
+  if (error || !profile) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-20 text-center">
+        <div className="flex justify-center mb-4">
+          <AlertTriangleIcon className="w-10 h-10 text-rose-400" />
+        </div>
+        <h2 className="text-xl font-bold text-white mb-2">User Profile Not Found</h2>
+        <p className="text-sm text-slate-400 mb-6">
+          The user <strong className="text-slate-200">@{cleanUsername}</strong> does not exist or may have been deleted.
+        </p>
+        <Link
+          href="/"
+          className="btn-secondary inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#0C1018]/90 hover:bg-[#141C2A] text-slate-100 text-sm font-medium rounded-lg border border-white/[0.14] transition-all shadow-sm"
+        >
+          <ArrowLeftIcon className="w-4 h-4" /> Back to Discover
+        </Link>
+      </div>
+    );
+  }
+
+  const totalLikes = (profile.solutions || []).reduce(
+    (sum, sol) => sum + (sol.like_count || 0),
+    0
+  );
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
@@ -65,89 +111,61 @@ function ProfileContent() {
         href="/"
         className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors mb-6"
       >
-        <ArrowLeft className="w-3.5 h-3.5" /> Back to Discover
+        <ArrowLeftIcon className="w-3.5 h-3.5" /> Back to Discover
       </Link>
 
       {/* Header Profile Card */}
-      <div className="card-structured p-6 sm:p-7 mb-8">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
-          <div className="w-16 h-16 rounded-xl bg-[#080B12] border border-white/[0.1] flex items-center justify-center text-rose-400 shrink-0">
-            <User className="w-8 h-8" />
-          </div>
+      <ProfileHeader
+        profile={{
+          id: profile.id,
+          username: profile.username,
+          full_name: profile.full_name,
+          avatar_url: profile.avatar_url,
+          bio: profile.bio,
+          skills: profile.skills,
+          interests: profile.interests,
+          created_at: profile.created_at,
+        }}
+        stats={{
+          problemCount: profile.problem_count || profile.recent_reports?.length || 0,
+          solutionCount: profile.solution_count || profile.solutions?.length || 0,
+          totalLikes: totalLikes,
+        }}
+      />
 
-          <div className="flex-1">
-            <h1 className="text-xl sm:text-2xl font-semibold text-white mb-0.5">
-              {profile.full_name || profile.username}
-            </h1>
-            <p className="text-xs text-rose-400 font-mono mb-2">@{profile.username}</p>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed mb-3">
-              {profile.bio || 'Active contributor and problem solver on Solvyn.'}
-            </p>
-
-            {/* Skills */}
-            {profile.skills && profile.skills.length > 0 && (
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
-                {profile.skills.map((skill, idx) => (
-                  <span
-                    key={idx}
-                    className="px-2 py-0.5 rounded text-[11px] font-mono bg-[#080B12] border border-white/[0.08] text-slate-300"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Stats Badges */}
-          <div className="flex sm:flex-col gap-2.5 shrink-0">
-            <div className="px-3.5 py-2 rounded-lg border border-white/[0.08] bg-[#080B12] text-center min-w-[5rem]">
-              <span className="block text-lg font-semibold text-white">
-                {profile.problem_count || 1}
-              </span>
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider">Reported</span>
-            </div>
-            <div className="px-3.5 py-2 rounded-lg border border-white/[0.08] bg-[#080B12] text-center min-w-[5rem]">
-              <span className="block text-lg font-semibold text-white">
-                {profile.solution_count || 1}
-              </span>
-              <span className="text-[10px] text-rose-400 uppercase tracking-wider">Solutions</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Contributions Section */}
-      <div className="space-y-3.5">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-white flex items-center gap-2">
-          <Code2 className="w-4 h-4 text-rose-400" />
-          Submitted Solutions
-        </h2>
-
-        <div className="card-structured p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-rose-950/60 text-rose-300 border border-rose-800/40">
-                Transportation
-              </span>
-              <h3 className="text-sm font-semibold text-white mt-2">
-                Solvyn Transit: Real-Time Open GTFS Route Visualizer
-              </h3>
-              <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                A lightweight Progressive Web App using open transit GTFS-RT telemetry with
-                crowd-sourced verification and ETA predictions.
-              </p>
-            </div>
-            <Link
-              href="/problems/e7b0d778-9e5c-44bf-a548-c96fa049b1a2"
-              className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-medium shrink-0"
-            >
-              <span>View Problem</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
-      </div>
+      {/* Submitted Solutions Section */}
+      <UserSolutions
+        solutions={profile.solutions || []}
+        solver={{
+          id: profile.id,
+          username: profile.username,
+          full_name: profile.full_name,
+          avatar_url: profile.avatar_url,
+        }}
+      />
     </div>
+  );
+}
+
+function PageContent({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = use(params);
+  return <ProfileContent rawUsername={username} />;
+}
+
+export default function ProfilePage({ params }: ProfilePageProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-4xl mx-auto px-4 py-20 text-center">
+          <svg className="w-8 h-8 text-rose-400 animate-spin mx-auto mb-3" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+          </svg>
+          <p className="text-sm text-slate-400">Loading builder profile...</p>
+        </div>
+      }
+    >
+      <PageContent params={params} />
+    </Suspense>
   );
 }
