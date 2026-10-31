@@ -3,11 +3,11 @@
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sparkles, PlusCircle, Compass, User, Menu, X, Bot } from 'lucide-react';
+import { Sparkles, Plus, Compass, User, Menu, X, Bot } from 'lucide-react';
 
 export default function Navbar() {
   return (
-    <Suspense fallback={<div className="h-16 w-full border-b border-white/[0.08] bg-[#0A0D14]/80" />}>
+    <Suspense fallback={<div className="h-14 w-full border-b border-white/[0.08] bg-[#0A0D14]" />}>
       <NavbarContent />
     </Suspense>
   );
@@ -20,74 +20,70 @@ function NavbarContent() {
   const navLinks = [
     { label: 'Discover', href: '/', icon: Compass },
     { label: 'AI Matcher', href: '/assistant', icon: Bot },
-    { label: 'Report Problem', href: '/report', icon: PlusCircle },
     { label: 'My Profile', href: '/profile/alex_dev', icon: User },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-[#0A0D14]/80 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-rose-500 via-pink-500 to-rose-600 p-[1px] shadow-sm shadow-rose-500/25 group-hover:shadow-rose-500/40 transition-shadow">
-            <div className="w-full h-full bg-[#0D111A] rounded-[7px] flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-rose-400 group-hover:rotate-12 transition-transform duration-300" />
+    <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-[#0A0D14]/90 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+        {/* Brand Wordmark */}
+        <div className="flex items-center gap-8">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-5 h-5 rounded bg-rose-600 flex items-center justify-center shadow-sm">
+              <Sparkles className="w-3 h-3 text-white" />
             </div>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-tight text-white flex items-center gap-1.5">
+            <span className="text-base font-semibold tracking-tight text-white">
               Solvyn
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block animate-pulse" />
             </span>
-          </div>
-        </Link>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1.5">
-          {navLinks.map((link) => {
-            const Icon = link.icon;
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-rose-950/40 text-rose-300 border border-rose-500/30 shadow-sm'
-                    : 'text-slate-300 hover:text-white hover:bg-white/[0.04]'
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-rose-400' : 'text-slate-400'}`} />
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    isActive
+                      ? 'bg-white/[0.08] text-white'
+                      : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-rose-400' : 'text-slate-500'}`} />
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
 
-        {/* Header Right Actions */}
+        {/* Right Action */}
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/report"
-            className="btn-primary-glow flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+            className="btn-primary flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium"
           >
-            <PlusCircle className="w-4 h-4" />
-            Report Problem
+            <Plus className="w-3.5 h-3.5" />
+            <span>Report Problem</span>
           </Link>
         </div>
 
         {/* Mobile menu button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/[0.08] transition-colors"
+          className="md:hidden p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
           aria-label="Toggle navigation menu"
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-white/[0.08] bg-[#0A0D14]/95 backdrop-blur-2xl px-4 pt-2 pb-4 space-y-1">
+        <div className="md:hidden border-b border-white/[0.08] bg-[#0A0D14]/98 px-4 pt-2 pb-4 space-y-1">
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
@@ -96,13 +92,13 @@ function NavbarContent() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium ${
                   isActive
-                    ? 'bg-rose-950/40 text-rose-300 border border-rose-500/30'
-                    : 'text-slate-300 hover:text-white hover:bg-white/[0.04]'
+                    ? 'bg-white/[0.08] text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-rose-400' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-rose-400' : 'text-slate-500'}`} />
                 {link.label}
               </Link>
             );
@@ -111,10 +107,10 @@ function NavbarContent() {
             <Link
               href="/report"
               onClick={() => setMobileMenuOpen(false)}
-              className="btn-primary-glow flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-sm font-semibold text-white"
+              className="btn-primary flex items-center justify-center gap-1.5 w-full py-2 text-xs font-medium"
             >
-              <PlusCircle className="w-4 h-4" />
-              Report Problem
+              <Plus className="w-3.5 h-3.5" />
+              <span>Report Problem</span>
             </Link>
           </div>
         </div>

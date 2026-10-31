@@ -9,13 +9,9 @@ import {
   Send,
   Bot,
   User,
-  ArrowRight,
   Loader2,
   Users,
-  AlertTriangle,
   RotateCcw,
-  Tag,
-  ExternalLink,
   ChevronRight,
   Compass,
 } from 'lucide-react';
@@ -159,7 +155,7 @@ function AssistantChatContent() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
-    } catch (err) {
+    } catch {
       const errorMessage: ChatMessage = {
         id: `err-${Date.now()}`,
         sender: 'assistant',
@@ -186,31 +182,29 @@ function AssistantChatContent() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex flex-col h-[calc(100vh-8rem)]">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex flex-col h-[calc(100vh-6.5rem)]">
       {/* Header Bar */}
-      <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/[0.08] shrink-0">
+      <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.08] shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-pink-600 p-[1px] shadow-md shadow-rose-500/25">
-            <div className="w-full h-full bg-[#0D111A] rounded-[11px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-rose-400" />
-            </div>
+          <div className="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white shrink-0">
+            <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-white flex items-center gap-2">
+            <h1 className="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
               Solvyn Problem Matcher
-              <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-950/60 text-rose-300 border border-rose-800/40">
-                AI Powered
+              <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-rose-950/60 text-rose-300 border border-rose-800/40">
+                AI Grounded
               </span>
             </h1>
-            <p className="text-xs text-slate-400">
-              Conversational matchmaking between your skills and real community challenges
+            <p className="text-[11px] text-slate-400">
+              Conversational matchmaking between your engineering skills and verified community friction
             </p>
           </div>
         </div>
 
         <button
           onClick={handleReset}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] transition-colors"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium text-slate-400 hover:text-white bg-[#0C1018] border border-white/[0.08] transition-colors"
           title="Reset conversation"
         >
           <RotateCcw className="w-3.5 h-3.5" />
@@ -219,74 +213,74 @@ function AssistantChatContent() {
       </div>
 
       {/* Chat Messages Feed */}
-      <div className="flex-1 overflow-y-auto pr-1 space-y-6 pb-6">
+      <div className="flex-1 overflow-y-auto pr-1 space-y-4 pb-4">
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={`flex flex-col ${
               msg.sender === 'user' ? 'items-end' : 'items-start'
-            } animate-in fade-in duration-200`}
+            } animate-in fade-in duration-150`}
           >
-            <div className="flex items-start gap-3 max-w-[88%] sm:max-w-[80%]">
+            <div className="flex items-start gap-2.5 max-w-[90%] sm:max-w-[80%]">
               {msg.sender === 'assistant' && (
-                <div className="w-8 h-8 rounded-lg bg-rose-950/70 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0 mt-0.5 shadow-sm">
-                  <Bot className="w-4 h-4" />
+                <div className="w-7 h-7 rounded bg-[#0C1018] border border-white/[0.08] flex items-center justify-center text-rose-400 shrink-0 mt-0.5">
+                  <Bot className="w-3.5 h-3.5" />
                 </div>
               )}
 
               <div>
                 {/* Message Bubble */}
                 <div
-                  className={`p-4 rounded-2xl text-sm leading-relaxed ${
+                  className={`p-3.5 rounded-lg text-xs sm:text-sm leading-relaxed ${
                     msg.sender === 'user'
-                      ? 'bg-rose-600 text-white shadow-md shadow-rose-900/30 rounded-tr-none'
-                      : 'bg-[#0D121F]/85 border border-white/[0.08] text-slate-200 backdrop-blur-md rounded-tl-none shadow-lg shadow-black/40'
+                      ? 'bg-rose-600 text-white font-medium'
+                      : 'card-structured text-slate-200'
                   }`}
                 >
                   <p className="whitespace-pre-line">{msg.content}</p>
                 </div>
 
                 {/* Timestamp */}
-                <span className="block text-[10px] text-slate-500 mt-1 px-1">
+                <span className="block text-[10px] text-slate-500 font-mono mt-1 px-1">
                   {msg.timestamp}
                 </span>
 
                 {/* Recommended Problem Cards */}
                 {msg.recommendedProblems && msg.recommendedProblems.length > 0 && (
-                  <div className="mt-4 space-y-3 w-full">
-                    <span className="text-xs font-semibold text-rose-300 flex items-center gap-1.5 uppercase tracking-wider">
-                      <Compass className="w-3.5 h-3.5" />
-                      Recommended Problem Statements
+                  <div className="mt-3 space-y-2 w-full">
+                    <span className="text-[11px] font-semibold text-rose-300 flex items-center gap-1 uppercase tracking-wider">
+                      <Compass className="w-3 h-3" />
+                      Recommended Problem Clusters
                     </span>
 
-                    <div className="grid grid-cols-1 gap-2.5">
+                    <div className="grid grid-cols-1 gap-2">
                       {msg.recommendedProblems.map((prob) => (
                         <Link
                           key={prob.id}
                           href={`/problems/${prob.id}`}
-                          className="group block p-4 rounded-xl border border-rose-500/30 bg-[#0A0E18]/90 hover:bg-[#111726] hover:border-rose-400/60 transition-all shadow-md shadow-black/50"
+                          className="group block p-3.5 rounded-lg card-structured hover:border-rose-500/40 transition-colors"
                         >
-                          <div className="flex items-start justify-between gap-3 mb-1.5">
-                            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-950/70 text-rose-300 border border-rose-800/40">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950/60 text-rose-300 border border-rose-800/40">
                               {prob.category || 'General'}
                             </span>
-                            <div className="flex items-center gap-1.5 text-xs text-rose-300 font-medium">
-                              <Users className="w-3.5 h-3.5 text-rose-400" />
+                            <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                              <Users className="w-3 h-3 text-rose-400" />
                               <span>{prob.report_count} reports</span>
                             </div>
                           </div>
 
-                          <h4 className="text-sm font-bold text-white group-hover:text-rose-300 transition-colors line-clamp-1 mb-1">
+                          <h4 className="text-xs font-semibold text-white group-hover:text-rose-300 transition-colors line-clamp-1 mb-1">
                             {prob.title}
                           </h4>
 
-                          <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed mb-3">
+                          <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed mb-2">
                             {prob.description}
                           </p>
 
-                          <div className="flex items-center justify-between text-xs text-rose-400 font-semibold group-hover:translate-x-0.5 transition-transform">
-                            <span>Inspect Root Sub-Problems &amp; Solutions</span>
-                            <ChevronRight className="w-4 h-4" />
+                          <div className="flex items-center justify-between text-[11px] text-rose-400 font-medium">
+                            <span>Inspect Sub-Problems &amp; Solutions</span>
+                            <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                           </div>
                         </Link>
                       ))}
@@ -296,8 +290,8 @@ function AssistantChatContent() {
               </div>
 
               {msg.sender === 'user' && (
-                <div className="w-8 h-8 rounded-lg bg-white/[0.08] border border-white/[0.1] flex items-center justify-center text-slate-300 shrink-0 mt-0.5">
-                  <User className="w-4 h-4" />
+                <div className="w-7 h-7 rounded bg-[#0C1018] border border-white/[0.08] flex items-center justify-center text-slate-300 shrink-0 mt-0.5">
+                  <User className="w-3.5 h-3.5" />
                 </div>
               )}
             </div>
@@ -305,12 +299,12 @@ function AssistantChatContent() {
         ))}
 
         {loading && (
-          <div className="flex items-start gap-3 animate-in fade-in">
-            <div className="w-8 h-8 rounded-lg bg-rose-950/70 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0 mt-0.5">
-              <Bot className="w-4 h-4" />
+          <div className="flex items-start gap-2.5 animate-in fade-in">
+            <div className="w-7 h-7 rounded bg-[#0C1018] border border-white/[0.08] flex items-center justify-center text-rose-400 shrink-0 mt-0.5">
+              <Bot className="w-3.5 h-3.5" />
             </div>
-            <div className="p-4 rounded-2xl rounded-tl-none bg-[#0D121F]/85 border border-white/[0.08] text-sm text-slate-300 flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin text-rose-400" />
+            <div className="p-3 rounded-lg card-structured text-xs text-slate-300 flex items-center gap-2">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-400" />
               <span>Matching problem statements from Solvyn database...</span>
             </div>
           </div>
@@ -321,8 +315,8 @@ function AssistantChatContent() {
 
       {/* Starter Prompts (if chat is fresh or only greeting exists) */}
       {messages.length <= 1 && (
-        <div className="pb-3 pt-1 shrink-0">
-          <span className="block text-xs font-semibold text-slate-400 mb-2">
+        <div className="pb-2.5 pt-1 shrink-0">
+          <span className="block text-[11px] font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
             Suggested starter queries:
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -330,7 +324,7 @@ function AssistantChatContent() {
               <button
                 key={idx}
                 onClick={() => handleSend(prompt)}
-                className="text-left p-2.5 rounded-lg border border-white/[0.08] bg-white/[0.02] hover:bg-rose-950/20 hover:border-rose-500/30 text-xs text-slate-300 hover:text-white transition-all line-clamp-2"
+                className="text-left p-2 rounded-lg card-structured hover:border-rose-500/40 text-xs text-slate-300 hover:text-white transition-colors line-clamp-2"
               >
                 &ldquo;{prompt}&rdquo;
               </button>
@@ -345,7 +339,7 @@ function AssistantChatContent() {
           e.preventDefault();
           handleSend();
         }}
-        className="relative pt-2 shrink-0"
+        className="relative pt-1.5 shrink-0"
       >
         <div className="relative flex items-center">
           <input
@@ -353,13 +347,13 @@ function AssistantChatContent() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={loading}
-            placeholder="Describe your skills, stack, or target domain (e.g. 'I know Python & ML, what transit problems exist?')..."
-            className="w-full pl-4 pr-24 py-3.5 rounded-xl border border-white/[0.12] bg-[#0A0D16]/90 backdrop-blur-xl text-white placeholder-slate-400 text-sm focus:outline-none focus:border-rose-500/60 focus:ring-2 focus:ring-rose-500/20 shadow-xl shadow-black/50 transition-all disabled:opacity-60"
+            placeholder="Describe your skills or target domain (e.g. 'I know Python & ML, what transit problems exist?')..."
+            className="w-full pl-3.5 pr-20 py-2.5 rounded-lg border border-white/[0.12] bg-[#0C1018] text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:border-rose-500/80 transition-all disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className="btn-primary-glow absolute right-2 px-4 py-2 rounded-lg text-white text-xs font-semibold shadow-md transition-all flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute right-1.5 px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
             <span className="hidden sm:inline">Send</span>

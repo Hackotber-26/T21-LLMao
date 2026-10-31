@@ -13,6 +13,10 @@ import {
   Users,
   CheckCircle2,
   TrendingUp,
+  ArrowRight,
+  GitBranch,
+  Terminal,
+  Layers,
 } from 'lucide-react';
 
 const CATEGORIES = [
@@ -66,106 +70,186 @@ export default function HomePage() {
 
   return (
     <div className="w-full">
-      {/* Hero Section */}
-      <section className="relative pt-12 pb-16 md:pt-20 md:pb-24 overflow-hidden text-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-rose-500/30 bg-rose-950/30 text-rose-300 text-xs font-medium mb-6 shadow-sm shadow-rose-500/10">
-            <Sparkles className="w-3.5 h-3.5 text-rose-400" />
-            <span>AI-Driven Problem Clustering Engine</span>
-          </div>
+      {/* Hero Section — Asymmetric, Content-First Layout */}
+      <section className="relative pt-8 pb-12 md:pt-14 md:pb-16 border-b border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            {/* Left Column: Clear Value Proposition */}
+            <div className="lg:col-span-7 space-y-6">
+              {/* Restrained kicker badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-rose-500/25 bg-rose-950/20 text-rose-300 text-xs font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                <span>Problem Discovery &amp; Solution Engine</span>
+              </div>
 
-          {/* Heading */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.12]">
-            Where Everyday Friction Meets{' '}
-            <span className="bg-gradient-to-r from-rose-400 via-pink-300 to-rose-200 bg-clip-text text-transparent">
-              Real-World Builders
-            </span>
-          </h1>
+              {/* Solid, confident typography — no gradient cliches */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white leading-[1.15]">
+                Where Real-World Friction Meets Dedicated Builders
+              </h1>
 
-          {/* Subtitle */}
-          <p className="text-base sm:text-lg text-slate-300/90 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Report challenges in natural language. Our AI organizes individual grievances into
-            structured, actionable problem clusters with root sub-problems so engineers can build
-            verified solutions.
-          </p>
+              {/* Focused paragraph with balanced measure */}
+              <p className="text-base text-slate-300 max-w-xl leading-relaxed font-normal">
+                Solvyn captures everyday citizen friction in natural language. Our engine clusters
+                fragmented complaints, decomposes them into root sub-problems, and connects them with
+                engineers building verified open solutions.
+              </p>
 
-          {/* Search Bar */}
-          <form
-            onSubmit={handleSearchSubmit}
-            className="relative max-w-2xl mx-auto mb-8 group"
-          >
-            <div className="relative flex items-center">
-              <Search className="absolute left-4 w-5 h-5 text-slate-400 group-focus-within:text-rose-400 transition-colors" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search problems, keywords, or systems (e.g. 'BMTC', 'hospital OPD', 'waste')..."
-                className="w-full pl-12 pr-28 py-3.5 rounded-xl border border-white/[0.12] bg-[#0A0D16]/85 backdrop-blur-xl text-white placeholder-slate-400 text-sm focus:outline-none focus:border-rose-500/60 focus:ring-2 focus:ring-rose-500/20 shadow-xl shadow-black/40 transition-all"
-              />
-              <button
-                type="submit"
-                className="btn-primary-glow absolute right-2 px-4 py-2 rounded-lg text-white text-xs font-semibold shadow-md transition-all"
-              >
-                Search
-              </button>
+              {/* Integrated Search Input */}
+              <form onSubmit={handleSearchSubmit} className="max-w-xl">
+                <div className="relative flex items-center">
+                  <Search className="absolute left-3.5 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search problems, keywords, systems (e.g. 'BMTC', 'OPD queue', 'waste')..."
+                    className="w-full pl-10 pr-24 py-2.5 rounded-lg border border-white/[0.12] bg-[#0C1018]/90 text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:border-rose-500/80 transition-all"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-1.5 px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium transition-colors"
+                  >
+                    Search
+                  </button>
+                </div>
+              </form>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                <Link href="/report" className="btn-primary">
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Report a Problem</span>
+                </Link>
+                <Link href="/assistant" className="btn-secondary">
+                  <Sparkles className="w-3.5 h-3.5 text-rose-400" />
+                  <span>AI Problem Matcher</span>
+                </Link>
+                <a
+                  href="#problem-feed"
+                  className="text-xs text-slate-400 hover:text-white transition-colors ml-2 flex items-center gap-1 font-medium"
+                >
+                  Explore clusters below <ArrowRight className="w-3 h-3" />
+                </a>
+              </div>
             </div>
-          </form>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/report"
-              className="btn-primary-glow flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white shadow-lg transition-all transform hover:-translate-y-0.5"
-            >
-              <PlusCircle className="w-4 h-4" />
-              Report a Problem
-            </Link>
-            <a
-              href="#problem-feed"
-              className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-sm text-slate-200 border border-white/[0.12] bg-white/[0.04] hover:bg-white/[0.08] hover:text-white transition-all backdrop-blur-sm"
-            >
-              Explore Existing Clusters
-            </a>
+            {/* Right Column: Architectural Pipeline Card (Explains How Solvyn Works) */}
+            <div className="lg:col-span-5">
+              <div className="card-structured p-5 relative overflow-hidden space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+                  <div className="flex items-center gap-2">
+                    <Terminal className="w-4 h-4 text-rose-400" />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-200">
+                      Solvyn Pipeline
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-emerald-400 font-mono bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/40">
+                    Live Workflow
+                  </span>
+                </div>
+
+                {/* Pipeline Steps */}
+                <div className="space-y-3 font-sans">
+                  {/* Step 1: Citizen Report */}
+                  <div className="p-3 rounded-lg bg-black/40 border border-white/[0.05] space-y-1">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400 font-medium">1. Citizen Report</span>
+                      <span className="text-slate-500">Bangalore Urban</span>
+                    </div>
+                    <p className="text-xs text-slate-200 italic">
+                      &ldquo;The BMTC app shows buses that never arrive. Commuters wait 45+ minutes with zero reliable status.&rdquo;
+                    </p>
+                  </div>
+
+                  {/* Step 2: AI Clustering & Decomposition */}
+                  <div className="p-3 rounded-lg bg-rose-950/20 border border-rose-500/20 space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-rose-300 font-medium flex items-center gap-1">
+                        <GitBranch className="w-3 h-3 text-rose-400" />
+                        2. AI Problem Decomposition
+                      </span>
+                      <span className="text-rose-400/80 font-mono text-[10px]">96% match</span>
+                    </div>
+                    <p className="text-xs font-semibold text-white">
+                      Transit Reliability &amp; Ghost Bus Telemetry
+                    </p>
+                    <div className="grid grid-cols-2 gap-1.5 pt-1 text-[11px]">
+                      <span className="px-2 py-1 rounded bg-black/30 text-slate-300 border border-white/[0.05]">
+                        • Telemetry lag &gt; 180s
+                      </span>
+                      <span className="px-2 py-1 rounded bg-black/30 text-slate-300 border border-white/[0.05]">
+                        • Sparse stop geofencing
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Step 3: Verified Solutions */}
+                  <div className="p-3 rounded-lg bg-black/40 border border-white/[0.05] space-y-1">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400 font-medium">3. Builder Solution</span>
+                      <span className="text-rose-400 font-semibold text-[11px]">2 Solutions Built</span>
+                    </div>
+                    <p className="text-xs text-slate-200 font-medium">
+                      OpenGTFS Realtime Telemetry Normalizer
+                    </p>
+                    <p className="text-[11px] text-slate-400">
+                      GitHub repo with live streaming web client and ETA predictor.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-1 text-[11px] text-slate-500 flex items-center justify-between">
+                  <span>Preserves human voice while generating engineering specs</span>
+                  <Link href="/report" className="text-rose-400 hover:underline">
+                    Report now →
+                  </Link>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* Main Problem Feed Section */}
-      <section id="problem-feed" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+      <section id="problem-feed" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24">
         {/* Filter Controls Bar */}
         <div className="flex flex-col gap-4 mb-8">
-          {/* Categories Horizontal Scroll */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-rose-500 text-white shadow-md shadow-rose-500/25'
-                    : 'bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08] border border-white/[0.05]'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          
+          {/* Category Tabs */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+            {CATEGORIES.map((cat) => {
+              const isSelected = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors ${
+                    isSelected
+                      ? 'bg-rose-600 text-white font-semibold'
+                      : 'bg-[#0C1018] text-slate-400 hover:text-white border border-white/[0.08] hover:border-white/[0.16]'
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
           </div>
 
-          {/* Sorting and Feed Header */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-white/[0.06]">
-            <div className="flex items-center gap-2 text-sm text-slate-300">
+          {/* Sub-bar: Count and Sorting */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-white/[0.06]">
+            <div className="flex items-center gap-2 text-xs text-slate-300">
               <span className="font-semibold text-white">
-                {loading ? 'Finding problem clusters...' : `${problems.length} Problem Clusters`}
+                {loading ? 'Fetching problem statements...' : `${problems.length} Problem Clusters`}
               </span>
               {selectedCategory !== 'All' && (
-                <span className="text-slate-500">in {selectedCategory}</span>
+                <span className="text-slate-500">in &ldquo;{selectedCategory}&rdquo;</span>
               )}
             </div>
 
             {/* Sort options */}
-            <div className="flex items-center gap-1 bg-[#0A0D16]/80 border border-white/[0.08] p-1 rounded-lg backdrop-blur-md">
+            <div className="flex items-center gap-1 bg-[#0C1018] border border-white/[0.08] p-1 rounded-md">
               {SORT_OPTIONS.map((opt) => {
                 const Icon = opt.icon;
                 const isSelected = selectedSort === opt.id;
@@ -173,10 +257,10 @@ export default function HomePage() {
                   <button
                     key={opt.id}
                     onClick={() => setSelectedSort(opt.id)}
-                    className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium transition-colors ${
                       isSelected
-                        ? 'bg-rose-950/40 text-rose-300 border border-rose-500/30 shadow-sm'
-                        : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                        ? 'bg-rose-950/60 text-rose-300 border border-rose-500/30'
+                        : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -190,41 +274,38 @@ export default function HomePage() {
 
         {/* Problems Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[1, 2, 3, 4].map((n) => (
               <div
                 key={n}
-                className="rounded-xl border border-white/[0.06] bg-[#0A0D16]/40 p-6 animate-pulse space-y-4"
+                className="card-structured p-6 animate-pulse space-y-4"
               >
-                <div className="h-4 bg-white/[0.08] rounded w-1/4" />
-                <div className="h-6 bg-white/[0.08] rounded w-3/4" />
-                <div className="h-14 bg-white/[0.05] rounded w-full" />
-                <div className="h-4 bg-white/[0.06] rounded w-1/2" />
+                <div className="h-4 bg-white/[0.06] rounded w-1/4" />
+                <div className="h-5 bg-white/[0.08] rounded w-3/4" />
+                <div className="h-12 bg-white/[0.04] rounded w-full" />
+                <div className="h-4 bg-white/[0.05] rounded w-1/2" />
               </div>
             ))}
           </div>
         ) : problems.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {problems.map((problem) => (
               <ProblemCard key={problem.id} problem={problem} solutionCount={1} />
             ))}
           </div>
         ) : (
           /* Empty State */
-          <div className="rounded-2xl border border-white/[0.08] bg-[#0C1019]/60 backdrop-blur-md p-12 text-center max-w-md mx-auto my-8">
-            <div className="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-4 text-rose-400">
-              <Search className="w-6 h-6" />
+          <div className="card-structured p-10 text-center max-w-md mx-auto my-8">
+            <div className="w-10 h-10 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-3 text-rose-400">
+              <Search className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2">No problems matched your query</h3>
-            <p className="text-sm text-slate-400 mb-6">
-              Be the first to report this challenge so the AI can create a new problem cluster.
+            <h3 className="text-base font-semibold text-white mb-1">No matching problem clusters</h3>
+            <p className="text-xs text-slate-400 mb-5 leading-relaxed">
+              No reported friction matches your filters yet. Submit the first report and Solvyn&apos;s AI will create a new cluster.
             </p>
-            <Link
-              href="/report"
-              className="btn-primary-glow inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white shadow-md"
-            >
+            <Link href="/report" className="btn-primary inline-flex">
               <PlusCircle className="w-4 h-4" />
-              Report this Problem
+              <span>Report this Problem</span>
             </Link>
           </div>
         )}

@@ -43,28 +43,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto px-4 py-16 sm:py-24">
-      <div className="rounded-2xl border border-white/[0.1] bg-[#0C1019]/85 backdrop-blur-xl p-8 shadow-2xl shadow-black/50">
-        <div className="text-center mb-8">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-pink-600 p-[1px] mx-auto mb-3 shadow-md shadow-rose-500/25">
-            <div className="w-full h-full bg-[#080B12] rounded-[11px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-rose-400" />
-            </div>
+    <div className="max-w-sm mx-auto px-4 py-16 sm:py-20">
+      <div className="card-structured p-7 space-y-6">
+        <div className="text-center space-y-1">
+          <div className="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white mx-auto mb-3">
+            <Sparkles className="w-4 h-4" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Welcome to Solvyn</h1>
-          <p className="text-xs text-slate-400 mt-1">Sign in to report challenges and build solutions</p>
+          <h1 className="text-xl font-semibold text-white tracking-tight">Sign in to Solvyn</h1>
+          <p className="text-xs text-slate-400">Discover real problems and submit verified builds</p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
+          <div className="p-2.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold text-slate-200 mb-1">Email Address</label>
+            <label className="block text-xs font-medium text-slate-300 mb-1">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
               <input
@@ -73,13 +71,13 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@domain.com"
-                className="w-full pl-9 pr-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500"
+                className="w-full pl-9 pr-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500/80"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-200 mb-1">Password</label>
+            <label className="block text-xs font-medium text-slate-300 mb-1">Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
               <input
@@ -88,7 +86,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500"
+                className="w-full pl-9 pr-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500/80"
               />
             </div>
           </div>
@@ -96,17 +94,26 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="btn-primary-glow w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-xs font-semibold text-white shadow-md disabled:opacity-50"
+            className="btn-primary w-full text-center justify-center mt-2"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-            <span>Sign In</span>
+            {loading ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Signing in...</span>
+              </>
+            ) : (
+              <>
+                <span>Sign In</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </>
+            )}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-xs text-slate-400">
+        <div className="text-center pt-2 border-t border-white/[0.06] text-xs text-slate-400">
           Don&apos;t have an account?{' '}
-          <Link href="/register" className="text-rose-400 hover:underline font-medium">
-            Register
+          <Link href="/register" className="text-rose-400 font-medium hover:underline">
+            Register here
           </Link>
         </div>
       </div>

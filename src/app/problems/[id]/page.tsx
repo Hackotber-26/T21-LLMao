@@ -91,7 +91,7 @@ function ProblemDetailContent() {
           setLikeCounts(counts);
           setLikedSolutions(liked);
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load problem statement.');
       } finally {
         setLoading(false);
@@ -149,7 +149,7 @@ function ProblemDetailContent() {
       if (res.success) {
         setSolSuccess(true);
         // Refresh local problem solutions view
-        const newSolution: any = {
+        const newSolution = {
           id: res.data?.id || `sol-${Date.now()}`,
           problem_id: id,
           user_id: 'current-user',
@@ -210,7 +210,7 @@ function ProblemDetailContent() {
         </p>
         <Link
           href="/"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.08] text-white text-sm"
+          className="btn-secondary inline-flex"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Discover
         </Link>
@@ -225,53 +225,53 @@ function ProblemDetailContent() {
   });
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
       {/* Back button */}
       <Link
         href="/"
-        className="inline-flex items-center gap-2 text-xs font-medium text-slate-400 hover:text-white transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors mb-6"
       >
-        <ArrowLeft className="w-4 h-4" /> Back to Discover
+        <ArrowLeft className="w-3.5 h-3.5" /> Back to Discover
       </Link>
 
       {/* Main Problem Cluster Header Card */}
-      <div className="rounded-2xl border border-white/[0.1] bg-[#0C1019]/85 backdrop-blur-xl p-6 sm:p-8 shadow-2xl shadow-black/50 mb-10">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+      <div className="card-structured p-6 sm:p-8 mb-8 space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-md text-xs font-semibold bg-rose-950/60 text-rose-300 border border-rose-800/40">
+            <span className="px-2.5 py-0.5 rounded text-xs font-semibold bg-rose-950/60 text-rose-300 border border-rose-800/40">
               {problem.category}
             </span>
-            <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border bg-rose-500/10 text-rose-400 border-rose-500/20 capitalize">
-              <AlertTriangle className="w-3 h-3" />
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-white/[0.04] text-slate-300 border border-white/[0.08] capitalize">
+              <AlertTriangle className="w-3 h-3 text-rose-400" />
               {problem.urgency || 'medium'} urgency
             </span>
-            <span className="px-2 py-0.5 rounded text-[11px] font-semibold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">
+            <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-black/40 text-slate-400 border border-white/[0.06]">
               {problem.status}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-400">
+          <div className="flex items-center gap-1.5 text-xs text-slate-400 font-mono">
             <Calendar className="w-3.5 h-3.5" />
-            <span>Formed on {formattedDate}</span>
+            <span>Formed {formattedDate}</span>
           </div>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-4 leading-tight">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight leading-tight">
           {problem.title}
         </h1>
 
-        <p className="text-base text-slate-300 leading-relaxed mb-6">
+        <p className="text-sm text-slate-300 leading-relaxed font-normal">
           {problem.description}
         </p>
 
         {/* Target Users */}
         {problem.target_users && problem.target_users.length > 0 && (
-          <div className="mb-6 p-3.5 rounded-xl border border-white/[0.06] bg-white/[0.02] flex flex-wrap items-center gap-2 text-xs">
-            <span className="text-slate-400 font-medium">Target Groups Affected:</span>
+          <div className="p-3 rounded-lg border border-white/[0.06] bg-black/30 flex flex-wrap items-center gap-2 text-xs">
+            <span className="text-slate-400 font-medium">Affected Groups:</span>
             {problem.target_users.map((userGroup, idx) => (
               <span
                 key={idx}
-                className="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-200 border border-slate-700 font-medium"
+                className="px-2 py-0.5 rounded bg-white/[0.04] text-slate-200 border border-white/[0.08] font-medium"
               >
                 {userGroup}
               </span>
@@ -280,78 +280,78 @@ function ProblemDetailContent() {
         )}
 
         {/* Cluster Metric Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-white/[0.08]">
-          <div className="p-3.5 rounded-xl border border-rose-500/20 bg-rose-950/20">
-            <span className="text-xs text-rose-300 flex items-center gap-1.5 mb-1">
-              <Users className="w-3.5 h-3.5" /> Total Reports
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+          <div className="p-3 rounded-lg border border-white/[0.06] bg-black/40">
+            <span className="text-[11px] text-slate-400 flex items-center gap-1.5 mb-0.5">
+              <Users className="w-3 h-3 text-rose-400" /> Total Reports
             </span>
-            <span className="text-2xl font-bold text-white">{problem.report_count}</span>
+            <span className="text-xl font-semibold text-white">{problem.report_count}</span>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-pink-500/20 bg-pink-950/20">
-            <span className="text-xs text-pink-300 flex items-center gap-1.5 mb-1">
-              <Code2 className="w-3.5 h-3.5" /> Solutions Built
+          <div className="p-3 rounded-lg border border-white/[0.06] bg-black/40">
+            <span className="text-[11px] text-slate-400 flex items-center gap-1.5 mb-0.5">
+              <Code2 className="w-3 h-3 text-rose-400" /> Solutions Built
             </span>
-            <span className="text-2xl font-bold text-white">
+            <span className="text-xl font-semibold text-white">
               {problem.solutions?.length || 0}
             </span>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-rose-500/20 bg-rose-950/20 col-span-2 sm:col-span-1">
-            <span className="text-xs text-rose-300 flex items-center gap-1.5 mb-1">
-              <Layers className="w-3.5 h-3.5" /> Sub-Problems
+          <div className="p-3 rounded-lg border border-white/[0.06] bg-black/40 col-span-2 sm:col-span-1">
+            <span className="text-[11px] text-slate-400 flex items-center gap-1.5 mb-0.5">
+              <Layers className="w-3 h-3 text-rose-400" /> Sub-Problems
             </span>
-            <span className="text-2xl font-bold text-white">
+            <span className="text-xl font-semibold text-white">
               {problem.sub_problems?.length || 1}
             </span>
           </div>
         </div>
 
         {/* Actions bar */}
-        <div className="pt-6 mt-6 border-t border-white/[0.08] flex flex-wrap items-center gap-3">
+        <div className="pt-4 border-t border-white/[0.08] flex flex-wrap items-center gap-3">
           <button
             onClick={() => setIsSubmitModalOpen(true)}
-            className="btn-primary-glow flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white shadow-md transition-all transform hover:-translate-y-0.5"
+            className="btn-primary"
           >
             <Plus className="w-4 h-4" />
-            Provide a Solution
+            <span>Provide a Solution</span>
           </button>
 
           <Link
             href={`/report?category=${encodeURIComponent(problem.category || '')}`}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm text-slate-200 border border-white/[0.12] bg-white/[0.04] hover:bg-white/[0.08] hover:text-white transition-colors"
+            className="btn-secondary"
           >
-            <MessageSquare className="w-4 h-4 text-rose-400" />
-            Report a Similar Problem
+            <MessageSquare className="w-3.5 h-3.5 text-rose-400" />
+            <span>Report a Similar Friction</span>
           </Link>
         </div>
       </div>
 
       {/* Grid: Left Column = Sub-problems & Individual Reports; Right Column = Solutions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Sub-Problems & Raw Community Reports */}
         <div className="lg:col-span-1 space-y-6">
           {/* Sub-Problems Breakdown */}
-          <div className="rounded-xl border border-white/[0.08] bg-[#0C1019]/75 backdrop-blur-md p-5">
-            <div className="flex items-center gap-2 mb-3">
+          <div className="card-structured p-4 space-y-3">
+            <div className="flex items-center gap-1.5">
               <Layers className="w-4 h-4 text-rose-400" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-white">
                 Identified Sub-Problems
               </h2>
             </div>
-            <p className="text-xs text-slate-400 mb-4">
-              AI decomposes user reports into distinct, actionable technical sub-problems:
+            <p className="text-[11px] text-slate-400">
+              AI decomposes user reports into distinct technical sub-problems:
             </p>
 
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {problem.sub_problems?.map((sub, idx) => (
                 <div
                   key={idx}
-                  className="p-3 rounded-lg border border-white/[0.06] bg-white/[0.02] flex items-center justify-between gap-3 text-xs"
+                  className="p-2.5 rounded-lg border border-white/[0.06] bg-black/30 flex items-center justify-between gap-2 text-xs"
                 >
                   <span className="font-medium text-slate-200">{sub.name}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-rose-950/60 text-rose-300 font-semibold border border-rose-800/40 text-[11px] shrink-0">
-                    {sub.count} {sub.count === 1 ? 'report' : 'reports'}
+                  <span className="px-1.5 py-0.5 rounded bg-rose-950/60 text-rose-300 font-mono text-[10px] shrink-0 border border-rose-800/40">
+                    {sub.count} {sub.count === 1 ? 'rep' : 'reps'}
                   </span>
                 </div>
               ))}
@@ -359,27 +359,27 @@ function ProblemDetailContent() {
           </div>
 
           {/* Sample Community Reports */}
-          <div className="rounded-xl border border-white/[0.08] bg-[#0C1019]/75 backdrop-blur-md p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-pink-400" />
-                <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+          <div className="card-structured p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <MessageSquare className="w-4 h-4 text-rose-400" />
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-white">
                   Individual Reports
                 </h2>
               </div>
-              <span className="text-[11px] text-slate-500">Preserved voices</span>
+              <span className="text-[10px] text-slate-500 font-mono">Preserved</span>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {problem.sample_reports?.map((rep) => (
                 <div
                   key={rep.id}
-                  className="p-3.5 rounded-lg border border-white/[0.05] bg-black/40 text-xs"
+                  className="p-3 rounded-lg border border-white/[0.05] bg-black/40 text-xs space-y-1.5"
                 >
-                  <p className="text-slate-300 italic mb-2 leading-relaxed">
+                  <p className="text-slate-300 italic leading-relaxed">
                     &ldquo;{rep.original_text}&rdquo;
                   </p>
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-white/[0.04]">
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1 border-t border-white/[0.04]">
                     <span className="text-rose-300 font-medium">{rep.sub_problem}</span>
                     <span>
                       {new Date(rep.created_at).toLocaleDateString('en-US', {
@@ -395,40 +395,40 @@ function ProblemDetailContent() {
         </div>
 
         {/* Right Column: Submitted Solutions */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-5">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Code2 className="w-5 h-5 text-rose-400" />
+              <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                <Code2 className="w-4 h-4 text-rose-400" />
                 Submitted Solutions ({problem.solutions?.length || 0})
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                Working prototypes, codebases, and live implementations built for this cluster.
+                Working codebases and live implementations built for this cluster.
               </p>
             </div>
 
             <button
               onClick={() => setIsSubmitModalOpen(true)}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition-colors"
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-md bg-rose-600 hover:bg-rose-700 text-white transition-colors"
             >
               + Add Solution
             </button>
           </div>
 
           {problem.solutions && problem.solutions.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               {problem.solutions.map((sol) => (
                 <div
                   key={sol.id}
-                  className="rounded-xl border border-white/[0.08] bg-[#0C1019]/80 backdrop-blur-md p-6 hover:border-rose-500/30 transition-all shadow-lg shadow-black/40"
+                  className="card-structured p-5 space-y-3"
                 >
-                  <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="text-base font-bold text-white hover:text-rose-300 transition-colors">
+                      <h3 className="text-sm font-semibold text-white hover:text-rose-300 transition-colors">
                         {sol.title}
                       </h3>
                       <span className="text-xs text-slate-400">
-                        Solved by{' '}
+                        Built by{' '}
                         <strong className="text-slate-200">
                           @{sol.solver?.username || 'builder'}
                         </strong>
@@ -438,14 +438,14 @@ function ProblemDetailContent() {
                     {/* Like button */}
                     <button
                       onClick={() => handleLike(sol.id)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                      className={`flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium border transition-colors ${
                         likedSolutions[sol.id]
-                          ? 'bg-rose-500/20 border-rose-500/50 text-rose-300'
-                          : 'bg-white/[0.04] border-white/[0.08] text-slate-300 hover:text-white hover:bg-white/[0.08]'
+                          ? 'bg-rose-950/60 border-rose-500/50 text-rose-300'
+                          : 'bg-[#080B12] border-white/[0.08] text-slate-400 hover:text-white'
                       }`}
                     >
                       <ThumbsUp
-                        className={`w-3.5 h-3.5 ${
+                        className={`w-3 h-3 ${
                           likedSolutions[sol.id] ? 'fill-rose-400 text-rose-400' : ''
                         }`}
                       />
@@ -453,21 +453,21 @@ function ProblemDetailContent() {
                     </button>
                   </div>
 
-                  <p className="text-sm text-slate-300 leading-relaxed mb-4">
+                  <p className="text-xs text-slate-300 leading-relaxed font-normal">
                     {sol.description}
                   </p>
 
                   {/* External links */}
-                  <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-white/[0.06] text-xs">
+                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/[0.06] text-xs">
                     {sol.github_url && (
                       <a
                         href={sol.github_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/[0.05] border border-white/[0.08] text-slate-200 hover:text-white hover:bg-white/[0.1] transition-colors"
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#080B12] border border-white/[0.08] text-slate-200 hover:text-white hover:border-white/[0.2] transition-colors"
                       >
                         <GithubIcon className="w-3.5 h-3.5" />
-                        <span>GitHub Repository</span>
+                        <span>GitHub Repo</span>
                         <ExternalLink className="w-3 h-3 text-slate-500" />
                       </a>
                     )}
@@ -477,7 +477,7 @@ function ProblemDetailContent() {
                         href={sol.demo_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-rose-950/40 border border-rose-800/40 text-rose-300 hover:bg-rose-900/50 transition-colors"
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-rose-950/40 border border-rose-800/40 text-rose-300 hover:bg-rose-900/50 transition-colors"
                       >
                         <Monitor className="w-3.5 h-3.5" />
                         <span>Interactive Demo</span>
@@ -490,10 +490,10 @@ function ProblemDetailContent() {
                         href={sol.live_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-pink-950/40 border border-pink-800/40 text-pink-300 hover:bg-pink-900/50 transition-colors"
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#080B12] border border-white/[0.08] text-slate-200 hover:text-white transition-colors"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
-                        <span>Live Production App</span>
+                        <span>Live App</span>
                       </a>
                     )}
                   </div>
@@ -501,19 +501,20 @@ function ProblemDetailContent() {
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-white/[0.12] p-8 text-center bg-white/[0.01]">
-              <Code2 className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+            <div className="card-structured p-8 text-center space-y-2 border-dashed">
+              <Code2 className="w-7 h-7 text-slate-500 mx-auto" />
               <h3 className="text-sm font-semibold text-white">No solutions submitted yet</h3>
-              <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto mb-4">
-                Be the first engineer or team to propose an open-source solution or prototype for this
-                problem cluster.
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                Be the first engineer or team to propose an open-source solution or prototype for this cluster.
               </p>
-              <button
-                onClick={() => setIsSubmitModalOpen(true)}
-                className="btn-primary-glow px-4 py-2 rounded-lg text-xs font-semibold text-white shadow-md"
-              >
-                Submit the First Solution
-              </button>
+              <div className="pt-2">
+                <button
+                  onClick={() => setIsSubmitModalOpen(true)}
+                  className="btn-primary"
+                >
+                  Submit the First Solution
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -521,18 +522,18 @@ function ProblemDetailContent() {
 
       {/* Solution Submission Modal */}
       {isSubmitModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg rounded-2xl border border-white/[0.15] bg-[#0C1019] p-6 shadow-2xl shadow-black/80 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="relative w-full max-w-lg card-structured p-6 max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setIsSubmitModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors"
+              className="absolute top-4 right-4 p-1.5 rounded text-slate-400 hover:text-white transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
 
             <div className="flex items-center gap-2 mb-1">
-              <Code2 className="w-5 h-5 text-rose-400" />
-              <h3 className="text-lg font-bold text-white">Submit a Solution</h3>
+              <Code2 className="w-4 h-4 text-rose-400" />
+              <h3 className="text-base font-semibold text-white">Submit a Solution</h3>
             </div>
             <p className="text-xs text-slate-400 mb-4">
               Link your repository and live demo for{' '}
@@ -540,17 +541,17 @@ function ProblemDetailContent() {
             </p>
 
             {solSuccess ? (
-              <div className="p-6 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-2">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
-                <h4 className="text-sm font-bold text-white">Solution Submitted!</h4>
+              <div className="p-6 rounded-lg bg-emerald-950/20 border border-emerald-500/30 text-center space-y-2">
+                <CheckCircle2 className="w-7 h-7 text-emerald-400 mx-auto" />
+                <h4 className="text-sm font-semibold text-white">Solution Submitted</h4>
                 <p className="text-xs text-slate-300">
-                  Your solution has been linked to this problem cluster.
+                  Your solution has been attached to this problem cluster.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSolutionSubmit} className="space-y-4">
                 {solError && (
-                  <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
+                  <div className="p-2.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
                     {solError}
                   </div>
                 )}
@@ -565,7 +566,7 @@ function ProblemDetailContent() {
                     value={solTitle}
                     onChange={(e) => setSolTitle(e.target.value)}
                     placeholder="e.g. Open-GTFS Real-Time Bus Tracker & PWA"
-                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500/80"
                   />
                 </div>
 
@@ -579,7 +580,7 @@ function ProblemDetailContent() {
                     value={solDescription}
                     onChange={(e) => setSolDescription(e.target.value)}
                     placeholder="Describe how your solution directly resolves the identified root sub-problems..."
-                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500 resize-y"
+                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500/80 resize-y"
                   />
                 </div>
 
@@ -593,7 +594,7 @@ function ProblemDetailContent() {
                     value={solGithub}
                     onChange={(e) => setSolGithub(e.target.value)}
                     placeholder="https://github.com/username/project"
-                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500/80"
                   />
                 </div>
 
@@ -607,7 +608,7 @@ function ProblemDetailContent() {
                       value={solDemo}
                       onChange={(e) => setSolDemo(e.target.value)}
                       placeholder="https://demo.app"
-                      className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500"
+                      className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500/80"
                     />
                   </div>
 
@@ -620,7 +621,7 @@ function ProblemDetailContent() {
                       value={solLive}
                       onChange={(e) => setSolLive(e.target.value)}
                       placeholder="https://app.com"
-                      className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500"
+                      className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500/80"
                     />
                   </div>
                 </div>
@@ -629,14 +630,14 @@ function ProblemDetailContent() {
                   <button
                     type="button"
                     onClick={() => setIsSubmitModalOpen(false)}
-                    className="px-4 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white"
+                    className="px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={solSubmitting}
-                    className="btn-primary-glow flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-semibold text-white shadow-md disabled:opacity-50"
+                    className="btn-primary"
                   >
                     {solSubmitting ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
