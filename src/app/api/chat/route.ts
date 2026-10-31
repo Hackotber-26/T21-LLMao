@@ -2,12 +2,15 @@ import { NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { ChatRequestSchema } from '@/lib/validation';
 import { successResponse, errorResponse } from '@/lib/utils/response';
-import Groq from 'groq-sdk';
+import { AIService } from '@/lib/services/ai.service';
+import { ExistingCluster, UserDiscoveryProfile } from '@/lib/ai/types';
+import { executeGroqStructuredQuery } from '@/lib/ai/groq-client';
+import { z } from 'zod';
 
 /**
  * POST /api/chat
  * Problem solver AI Assistant - coordinates real problem data with LLM recommendations
- * (Designed for integration with Member 3 and Member 4)
+ * (Powered by Member 3 AI Discovery Module)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -26,10 +29,8 @@ export async function POST(request: NextRequest) {
     const { message, problem_id } = parseResult.data;
     const supabase = await createClient();
 
-    let contextData = '';
-
     if (problem_id) {
-      // Fetch specific problem with reports and solutions
+      // Fetch specific problem with solutions
       const { data: problem } = await supabase
         .from('problems')
         .select(`
@@ -39,54 +40,73 @@ export async function POST(request: NextRequest) {
         .eq('id', problem_id)
         .single();
 
-      if (problem) {
-        contextData = `Currently Discussing Problem:
-Title: ${problem.title}
-Description: ${problem.description}
+      if (!problem) {
+        return errorResponse('NOT_FOUND', 'Specified problem cluster not found', 404);
+      }
+
+      // Answer user query strictly grounded in this problem
+      const systemPrompt = `You are Solvyn Assistant. You are advising a builder/solver on this specific real-world problem:
+Title: "${problem.title}"
 Category: ${problem.category}
+Description: ${problem.description}
 Report Count: ${problem.report_count}
-Existing Solutions: ${problem.solutions?.map((s) => s.title).join(', ') || 'None yet'}`;
-      }
-    } else {
-      // General discovery: retrieve top 5 real problems from database
-      const { data: problems } = await supabase
-        .from('problems')
-        .select('id, title, description, category, report_count')
-        .order('report_count', { ascending: false })
-        .limit(5);
+Target Users: ${(problem.target_users || []).join(', ')}
+Urgency: ${problem.urgency}
+Existing Solutions: ${(problem.solutions || []).map((s: { title: string }) => s.title).join(', ') || 'None yet'}
 
-      if (problems && problems.length > 0) {
-        contextData = `Active Real-World Problems on Solvyn:
-${problems.map((p) => `- [${p.id}] "${p.title}" (${p.category || 'General'}, ${p.report_count} reports): ${p.description}`).join('\n')}`;
-      }
-    }
+Ground your answers strictly in the problem context. Suggest practical architectures, APIs, and impact solutions.`;
 
-    if (!process.env.GROQ_API_KEY) {
-      return successResponse({
-        reply: `Solvyn Assistant Context:\n${contextData ? contextData + '\n\n' : ''}AI service is awaiting GROQ_API_KEY configuration in .env.local.`,
+      const ChatAnswerSchema = z.object({
+        reply: z.string(),
       });
+
+      try {
+        const { data } = await executeGroqStructuredQuery<{ reply: string }>({
+          systemPrompt,
+          userPrompt: message,
+          schema: ChatAnswerSchema,
+          temperature: 0.3,
+        });
+        return successResponse(data);
+      } catch {
+        return successResponse({
+          reply: `For "${problem.title}", this issue currently has ${problem.report_count} verified citizen reports. High-impact areas for development include building accessible client apps or data bridges for ${problem.target_users?.join(', ') || 'affected stakeholders'}.`,
+        });
+      }
     }
 
-    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-    const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+    // General Discovery Recommendation Mode
+    // Fetch active problems from database
+    const { data: problems } = await supabase
+      .from('problems')
+      .select('id, title, description, category, report_count, status, keywords')
+      .neq('status', 'archived')
+      .order('report_count', { ascending: false })
+      .limit(10);
 
-    const systemPrompt = `You are Solvyn Assistant, helping builders, developers, and students discover real-world problems and brainstorm actionable solutions.
-Ground your answers ONLY in the real problems provided in the context below. Do not fabricate fake problem entities.
-Context:
-${contextData}`;
+    const availableClusters: ExistingCluster[] = (problems || []).map((p) => ({
+      id: p.id,
+      title: p.title,
+      description: p.description,
+      category: p.category || 'General',
+      keywords: p.keywords || [],
+      report_count: p.report_count,
+    }));
 
-    const completion = await groq.chat.completions.create({
-      model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: message },
-      ],
-      temperature: 0.5,
+    const profile: UserDiscoveryProfile = {
+      skills: ['TypeScript', 'Full-stack', 'Mobile', 'AI'],
+      interests: ['Civic Tech', 'Transportation', 'Healthcare', 'Public Good'],
+      query: message,
+    };
+
+    const recommendation = await AIService.recommendProblems(profile, availableClusters);
+
+    return successResponse({
+      reply: recommendation.explanation,
+      recommendations: recommendation.recommendations,
+      total_problems_searched: recommendation.total_available_searched,
+      source: recommendation.source,
     });
-
-    const reply = completion.choices[0]?.message?.content || 'I could not generate a response at this time.';
-
-    return successResponse({ reply });
   } catch (error) {
     console.error('[POST /api/chat] Error:', error);
     return errorResponse(

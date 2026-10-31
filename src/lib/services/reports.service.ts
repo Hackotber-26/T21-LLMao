@@ -1,62 +1,118 @@
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { AIService } from './ai.service';
-import { AIMatchCandidate, Problem } from '@/types/api.types';
+import { ExistingCluster } from '@/lib/ai/types';
+import { Problem } from '@/types/api.types';
 
 export class ReportsService {
   /**
-   * Submit a new real-world problem report:
-   * 1. Validate & classify via AI
-   * 2. Find candidate clusters in database
-   * 3. Ask AI whether it belongs to an existing cluster or forms a new cluster
-   * 4. Save individual report (preserving original text)
-   * 5. Return updated problem info
+   * Submit a new real-world problem report through the complete AI pipeline:
+   * 1. Authenticate & validate request
+   * 2. AI validates and normalizes report
+   * 3. Retrieve real candidate problem clusters from Supabase
+   * 4. AI evaluates hierarchical clustering (MATCH_EXISTING vs NEW_CLUSTER)
+   * 5. Persist original report without overwriting raw user text
+   * 6. Return updated cluster and report metadata
    */
-  public static async submitReport(userId: string | null, originalText: string, category?: string) {
-    const supabase = await createClient();
+  public static async submitReport(
+    userId: string | null,
+    originalText: string,
+    category?: string,
+    location?: string
+  ) {
+    const supabase = createAdminClient();
 
-    // 1. AI Classification
-    const classification = await AIService.validateAndClassifyProblem(originalText, category);
-    if (!classification.is_valid) {
-      throw new Error(classification.rejection_reason || 'Report was not recognized as a valid real-world problem statement');
+    // 1. AI Validation and Understanding
+    const validation = await AIService.validateAndClassifyProblem(
+      originalText,
+      category,
+      location
+    );
+
+    if (!validation.is_valid) {
+      throw new Error(
+        validation.reason ||
+          'Report was not recognized as a valid real-world problem statement'
+      );
     }
 
-    // 2. Fetch candidate clusters (same category or recent open problems)
+    // 2. Fetch candidate clusters from Supabase
+    // Pre-filter active/open problems
     let candidateQuery = supabase
       .from('problems')
-      .select('id, title, description, category, keywords')
+      .select('id, title, description, category, keywords, report_count, status')
       .neq('status', 'archived')
       .order('report_count', { ascending: false })
       .limit(20);
 
-    if (classification.category) {
-      candidateQuery = candidateQuery.ilike('category', `%${classification.category}%`);
+    const { data: rawCandidates, error: candError } = await candidateQuery;
+    if (candError) {
+      console.warn('[ReportsService] Candidate query error:', candError.message);
     }
 
-    const { data: candidates } = await candidateQuery;
+    const candidateClusters: ExistingCluster[] = (rawCandidates || []).map((c) => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      category: c.category || 'General',
+      keywords: c.keywords || [],
+      report_count: c.report_count,
+      status: c.status === 'solved' ? 'resolved' : 'active',
+    }));
 
-    // 3. Match against candidates via AI
+    // 3. AI Hierarchical Clustering & Sub-problem Identification
     const matchingResult = await AIService.findRelatedProblems(
-      classification,
-      (candidates as AIMatchCandidate[]) || []
+      {
+        title: validation.normalized_title,
+        description: originalText,
+        submittedCategory: validation.category,
+      },
+      candidateClusters
     );
 
     let targetProblemId: string;
+    let isNewCluster = false;
 
-    if (matchingResult.match_found && matchingResult.matched_problem_id) {
-      targetProblemId = matchingResult.matched_problem_id;
+    // Check if match was found with high confidence
+    if (
+      matchingResult.match_decision === 'MATCH_EXISTING' &&
+      matchingResult.matched_cluster_id
+    ) {
+      targetProblemId = matchingResult.matched_cluster_id;
+
+      // Update cluster's target_users if new demographics identified
+      if (validation.target_users && validation.target_users.length > 0) {
+        const existingCluster = candidateClusters.find((c) => c.id === targetProblemId);
+        if (existingCluster) {
+          const { data: currentProblem } = await supabase
+            .from('problems')
+            .select('target_users')
+            .eq('id', targetProblemId)
+            .single();
+
+          const existingUsers = currentProblem?.target_users || [];
+          const combined = Array.from(new Set([...existingUsers, ...validation.target_users]));
+
+          await supabase
+            .from('problems')
+            .update({ target_users: combined, updated_at: new Date().toISOString() })
+            .eq('id', targetProblemId);
+        }
+      }
     } else {
-      // Create new problem cluster
+      // Create a brand new problem cluster
+      isNewCluster = true;
       const { data: newProblem, error: createError } = await supabase
         .from('problems')
         .insert({
-          title: classification.normalized_title,
-          description: classification.problem_description,
-          category: classification.category,
-          keywords: classification.keywords,
-          urgency: classification.urgency,
-          target_users: classification.target_users,
+          title: validation.normalized_title,
+          description: validation.problem_description,
+          category: validation.category,
+          keywords: validation.keywords,
+          urgency: validation.urgency,
+          target_users: validation.target_users,
           status: 'open',
-          report_count: 0, // Trigger will increment on report insert
+          report_count: 0, // Automatically managed by DB trigger on report insert
         })
         .select()
         .single();
@@ -68,15 +124,15 @@ export class ReportsService {
       targetProblemId = newProblem.id;
     }
 
-    // 4. Save the individual report (preserving raw original_text without alterations)
+    // 4. Persist the individual user report (Never overwrite or alter raw original_text)
     const { data: savedReport, error: reportError } = await supabase
       .from('reports')
       .insert({
         problem_id: targetProblemId,
         user_id: userId,
         original_text: originalText,
-        sub_problem: matchingResult.sub_problem || classification.sub_problem,
-        category: classification.category,
+        sub_problem: matchingResult.sub_problem || validation.sub_problem,
+        category: validation.category,
       })
       .select()
       .single();
@@ -85,7 +141,7 @@ export class ReportsService {
       throw new Error(`Failed to save report: ${reportError?.message}`);
     }
 
-    // 5. Fetch updated problem record (with updated report_count from trigger)
+    // 5. Fetch updated problem record (with reliable DB trigger updated report_count)
     const { data: updatedProblem } = await supabase
       .from('problems')
       .select('*')
@@ -95,8 +151,21 @@ export class ReportsService {
     return {
       report: savedReport,
       problem: updatedProblem as Problem,
-      ai_classification: classification,
-      ai_matching: matchingResult,
+      clustering: {
+        is_new_cluster: isNewCluster,
+        decision: matchingResult.match_decision,
+        confidence: matchingResult.confidence,
+        sub_problem: savedReport.sub_problem,
+        reason: matchingResult.reason,
+        flagged_for_review: matchingResult.flagged_for_review,
+      },
+      ai_validation: {
+        category: validation.category,
+        normalized_title: validation.normalized_title,
+        urgency: validation.urgency,
+        target_users: validation.target_users,
+        source: validation.source,
+      },
     };
   }
 }

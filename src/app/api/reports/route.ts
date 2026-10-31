@@ -35,12 +35,13 @@ export async function POST(request: NextRequest) {
       return errorResponse('VALIDATION_ERROR', 'Validation failed', 400, parseResult.error.format());
     }
 
-    const { original_text, category } = parseResult.data;
+    const { original_text, category, location } = parseResult.data;
 
     const result = await ReportsService.submitReport(
       user.id,
       original_text,
-      category
+      category,
+      location
     );
 
     return successResponse(result, 'Problem report submitted and clustered successfully', 201);

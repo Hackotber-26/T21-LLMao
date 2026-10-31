@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { Solution, SolutionDetailResponse } from '@/types/api.types';
 import { z } from 'zod';
 import { SubmitSolutionSchema } from '@/lib/validation';
@@ -8,7 +9,7 @@ export class SolutionsService {
    * Submit a new solution
    */
   public static async submitSolution(userId: string, payload: z.infer<typeof SubmitSolutionSchema>) {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // Verify problem exists
     const { data: problem, error: pError } = await supabase
@@ -91,7 +92,7 @@ export class SolutionsService {
    * Toggle like for authenticated user on a solution
    */
   public static async toggleLike(solutionId: string, userId: string) {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // Check if solution exists
     const { data: solution, error: solError } = await supabase
