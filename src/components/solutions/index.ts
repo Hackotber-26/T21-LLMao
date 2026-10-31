@@ -9,3 +9,6 @@ export type { SolutionListProps, SortOption } from './SolutionList';
 
 export { ExternalResourceLinks } from './ExternalResourceLinks';
 export type { ExternalResourceLinksProps } from './ExternalResourceLinks';
+
+export { LikeButton } from './LikeButton';
+export type { LikeButtonProps } from './LikeButton';

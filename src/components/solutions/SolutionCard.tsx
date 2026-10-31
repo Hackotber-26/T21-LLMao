@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Solution } from '@/types/api.types';
 import { ExternalResourceLinks } from './ExternalResourceLinks';
+import { LikeButton } from './LikeButton';
 
 export interface SolutionCardProps {
   solution: Solution & {
@@ -77,6 +78,7 @@ export function SolutionCard({
     created_at,
     solver,
     problem,
+    has_liked,
   } = solution;
 
   const solverName = solver?.full_name || solver?.username || 'Anonymous Solver';
@@ -131,24 +133,13 @@ export function SolutionCard({
             </div>
           </div>
 
-          {/* Read-Only Like Counter Badge (Interactive like handled in Module 3) */}
-          <div
-            className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/80 px-2.5 py-1 text-xs font-semibold text-zinc-600 dark:text-zinc-300"
-            title={`${like_count} ${like_count === 1 ? 'person likes this' : 'people like this'}`}
-          >
-            <svg
-              className="h-3.5 w-3.5 text-rose-500"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>{like_count}</span>
-          </div>
+          {/* Interactive Like Button */}
+          <LikeButton
+            solutionId={id}
+            initialLikeCount={like_count}
+            initialHasLiked={has_liked ?? false}
+            size="sm"
+          />
         </div>
 
         {/* Problem Context Reference (if requested and present) */}
