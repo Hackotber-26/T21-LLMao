@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { api } from '@/lib/api';
-import { ProblemDetailResponse, Solution } from '@/types/api.types';
+import { ProblemDetailResponse } from '@/types/api.types';
 import {
   Users,
   Code2,
@@ -14,14 +14,11 @@ import {
   ThumbsUp,
   Plus,
   MessageSquare,
-  Sparkles,
   Layers,
   ArrowLeft,
   CheckCircle2,
-  Shield,
   Loader2,
   X,
-  Play,
   Monitor,
 } from 'lucide-react';
 
@@ -37,14 +34,12 @@ function GithubIcon({ className = 'w-3.5 h-3.5' }: { className?: string }) {
   );
 }
 
-import { Suspense } from 'react';
-
 export default function ProblemDetailPage() {
   return (
     <Suspense
       fallback={
         <div className="max-w-5xl mx-auto px-4 py-20 flex flex-col items-center justify-center text-center">
-          <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mb-4" />
+          <Loader2 className="w-8 h-8 text-rose-400 animate-spin mb-4" />
           <p className="text-sm text-slate-400">Loading problem cluster details...</p>
         </div>
       }
@@ -157,7 +152,7 @@ function ProblemDetailContent() {
         const newSolution: any = {
           id: res.data?.id || `sol-${Date.now()}`,
           problem_id: id,
-          solver_id: 'current-user',
+          user_id: 'current-user',
           title: solTitle.trim(),
           description: solDescription.trim(),
           github_url: solGithub.trim(),
@@ -174,7 +169,9 @@ function ProblemDetailContent() {
             avatar_url: null,
           },
         };
-        setProblem((prev) => (prev ? { ...prev, solutions: [newSolution, ...prev.solutions] } : prev));
+        setProblem((prev) =>
+          prev ? { ...prev, solutions: [newSolution, ...prev.solutions] } : prev
+        );
         setTimeout(() => {
           setIsSubmitModalOpen(false);
           setSolSuccess(false);
@@ -197,7 +194,7 @@ function ProblemDetailContent() {
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto px-4 py-20 flex flex-col items-center justify-center text-center">
-        <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mb-4" />
+        <Loader2 className="w-8 h-8 text-rose-400 animate-spin mb-4" />
         <p className="text-sm text-slate-400">Loading problem cluster details...</p>
       </div>
     );
@@ -238,17 +235,17 @@ function ProblemDetailContent() {
       </Link>
 
       {/* Main Problem Cluster Header Card */}
-      <div className="rounded-2xl border border-white/[0.1] bg-[#0A0F1D]/85 backdrop-blur-xl p-6 sm:p-8 shadow-2xl shadow-black/50 mb-10">
+      <div className="rounded-2xl border border-white/[0.1] bg-[#0C1019]/85 backdrop-blur-xl p-6 sm:p-8 shadow-2xl shadow-black/50 mb-10">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-md text-xs font-semibold bg-cyan-950/60 text-cyan-300 border border-cyan-800/40">
+            <span className="px-3 py-1 rounded-md text-xs font-semibold bg-rose-950/60 text-rose-300 border border-rose-800/40">
               {problem.category}
             </span>
-            <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border bg-amber-500/10 text-amber-400 border-amber-500/20 capitalize">
+            <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border bg-rose-500/10 text-rose-400 border-rose-500/20 capitalize">
               <AlertTriangle className="w-3 h-3" />
               {problem.urgency || 'medium'} urgency
             </span>
-            <span className="px-2 py-0.5 rounded text-[11px] font-semibold uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">
+            <span className="px-2 py-0.5 rounded text-[11px] font-semibold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">
               {problem.status}
             </span>
           </div>
@@ -284,25 +281,29 @@ function ProblemDetailContent() {
 
         {/* Cluster Metric Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-white/[0.08]">
-          <div className="p-3.5 rounded-xl border border-cyan-500/20 bg-cyan-950/20">
-            <span className="text-xs text-cyan-300 flex items-center gap-1.5 mb-1">
+          <div className="p-3.5 rounded-xl border border-rose-500/20 bg-rose-950/20">
+            <span className="text-xs text-rose-300 flex items-center gap-1.5 mb-1">
               <Users className="w-3.5 h-3.5" /> Total Reports
             </span>
             <span className="text-2xl font-bold text-white">{problem.report_count}</span>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-indigo-500/20 bg-indigo-950/20">
-            <span className="text-xs text-indigo-300 flex items-center gap-1.5 mb-1">
+          <div className="p-3.5 rounded-xl border border-pink-500/20 bg-pink-950/20">
+            <span className="text-xs text-pink-300 flex items-center gap-1.5 mb-1">
               <Code2 className="w-3.5 h-3.5" /> Solutions Built
             </span>
-            <span className="text-2xl font-bold text-white">{problem.solutions?.length || 0}</span>
+            <span className="text-2xl font-bold text-white">
+              {problem.solutions?.length || 0}
+            </span>
           </div>
 
-          <div className="p-3.5 rounded-xl border border-purple-500/20 bg-purple-950/20 col-span-2 sm:col-span-1">
-            <span className="text-xs text-purple-300 flex items-center gap-1.5 mb-1">
+          <div className="p-3.5 rounded-xl border border-rose-500/20 bg-rose-950/20 col-span-2 sm:col-span-1">
+            <span className="text-xs text-rose-300 flex items-center gap-1.5 mb-1">
               <Layers className="w-3.5 h-3.5" /> Sub-Problems
             </span>
-            <span className="text-2xl font-bold text-white">{problem.sub_problems?.length || 1}</span>
+            <span className="text-2xl font-bold text-white">
+              {problem.sub_problems?.length || 1}
+            </span>
           </div>
         </div>
 
@@ -310,7 +311,7 @@ function ProblemDetailContent() {
         <div className="pt-6 mt-6 border-t border-white/[0.08] flex flex-wrap items-center gap-3">
           <button
             onClick={() => setIsSubmitModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 shadow-md shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5"
+            className="btn-primary-glow flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white shadow-md transition-all transform hover:-translate-y-0.5"
           >
             <Plus className="w-4 h-4" />
             Provide a Solution
@@ -320,7 +321,7 @@ function ProblemDetailContent() {
             href={`/report?category=${encodeURIComponent(problem.category || '')}`}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm text-slate-200 border border-white/[0.12] bg-white/[0.04] hover:bg-white/[0.08] hover:text-white transition-colors"
           >
-            <MessageSquare className="w-4 h-4 text-cyan-400" />
+            <MessageSquare className="w-4 h-4 text-rose-400" />
             Report a Similar Problem
           </Link>
         </div>
@@ -331,9 +332,9 @@ function ProblemDetailContent() {
         {/* Left Column: Sub-Problems & Raw Community Reports */}
         <div className="lg:col-span-1 space-y-6">
           {/* Sub-Problems Breakdown */}
-          <div className="rounded-xl border border-white/[0.08] bg-[#0A0F1D]/75 backdrop-blur-md p-5">
+          <div className="rounded-xl border border-white/[0.08] bg-[#0C1019]/75 backdrop-blur-md p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Layers className="w-4 h-4 text-cyan-400" />
+              <Layers className="w-4 h-4 text-rose-400" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-white">
                 Identified Sub-Problems
               </h2>
@@ -349,7 +350,7 @@ function ProblemDetailContent() {
                   className="p-3 rounded-lg border border-white/[0.06] bg-white/[0.02] flex items-center justify-between gap-3 text-xs"
                 >
                   <span className="font-medium text-slate-200">{sub.name}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 font-semibold border border-cyan-800/40 text-[11px] shrink-0">
+                  <span className="px-2 py-0.5 rounded-full bg-rose-950/60 text-rose-300 font-semibold border border-rose-800/40 text-[11px] shrink-0">
                     {sub.count} {sub.count === 1 ? 'report' : 'reports'}
                   </span>
                 </div>
@@ -358,10 +359,10 @@ function ProblemDetailContent() {
           </div>
 
           {/* Sample Community Reports */}
-          <div className="rounded-xl border border-white/[0.08] bg-[#0A0F1D]/75 backdrop-blur-md p-5">
+          <div className="rounded-xl border border-white/[0.08] bg-[#0C1019]/75 backdrop-blur-md p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-indigo-400" />
+                <MessageSquare className="w-4 h-4 text-pink-400" />
                 <h2 className="text-sm font-bold uppercase tracking-wider text-white">
                   Individual Reports
                 </h2>
@@ -379,7 +380,7 @@ function ProblemDetailContent() {
                     &ldquo;{rep.original_text}&rdquo;
                   </p>
                   <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-white/[0.04]">
-                    <span className="text-indigo-300 font-medium">{rep.sub_problem}</span>
+                    <span className="text-rose-300 font-medium">{rep.sub_problem}</span>
                     <span>
                       {new Date(rep.created_at).toLocaleDateString('en-US', {
                         month: 'short',
@@ -398,7 +399,7 @@ function ProblemDetailContent() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Code2 className="w-5 h-5 text-indigo-400" />
+                <Code2 className="w-5 h-5 text-rose-400" />
                 Submitted Solutions ({problem.solutions?.length || 0})
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
@@ -408,7 +409,7 @@ function ProblemDetailContent() {
 
             <button
               onClick={() => setIsSubmitModalOpen(true)}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30 transition-colors"
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition-colors"
             >
               + Add Solution
             </button>
@@ -419,11 +420,11 @@ function ProblemDetailContent() {
               {problem.solutions.map((sol) => (
                 <div
                   key={sol.id}
-                  className="rounded-xl border border-white/[0.08] bg-[#0B0F19]/80 backdrop-blur-md p-6 hover:border-indigo-500/30 transition-all shadow-lg shadow-black/40"
+                  className="rounded-xl border border-white/[0.08] bg-[#0C1019]/80 backdrop-blur-md p-6 hover:border-rose-500/30 transition-all shadow-lg shadow-black/40"
                 >
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <div>
-                      <h3 className="text-base font-bold text-white hover:text-cyan-300 transition-colors">
+                      <h3 className="text-base font-bold text-white hover:text-rose-300 transition-colors">
                         {sol.title}
                       </h3>
                       <span className="text-xs text-slate-400">
@@ -476,11 +477,11 @@ function ProblemDetailContent() {
                         href={sol.demo_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-cyan-950/40 border border-cyan-800/40 text-cyan-300 hover:bg-cyan-900/50 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-rose-950/40 border border-rose-800/40 text-rose-300 hover:bg-rose-900/50 transition-colors"
                       >
                         <Monitor className="w-3.5 h-3.5" />
                         <span>Interactive Demo</span>
-                        <ExternalLink className="w-3 h-3 text-cyan-500" />
+                        <ExternalLink className="w-3 h-3 text-rose-400" />
                       </a>
                     )}
 
@@ -489,7 +490,7 @@ function ProblemDetailContent() {
                         href={sol.live_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-indigo-950/40 border border-indigo-800/40 text-indigo-300 hover:bg-indigo-900/50 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-pink-950/40 border border-pink-800/40 text-pink-300 hover:bg-pink-900/50 transition-colors"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                         <span>Live Production App</span>
@@ -509,7 +510,7 @@ function ProblemDetailContent() {
               </p>
               <button
                 onClick={() => setIsSubmitModalOpen(true)}
-                className="px-4 py-2 rounded-lg text-xs font-semibold bg-cyan-500 hover:bg-cyan-400 text-white shadow-md shadow-cyan-500/25 transition-all"
+                className="btn-primary-glow px-4 py-2 rounded-lg text-xs font-semibold text-white shadow-md"
               >
                 Submit the First Solution
               </button>
@@ -521,7 +522,7 @@ function ProblemDetailContent() {
       {/* Solution Submission Modal */}
       {isSubmitModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg rounded-2xl border border-white/[0.15] bg-[#0A0F1D] p-6 shadow-2xl shadow-black/80 max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg rounded-2xl border border-white/[0.15] bg-[#0C1019] p-6 shadow-2xl shadow-black/80 max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setIsSubmitModalOpen(false)}
               className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors"
@@ -530,7 +531,7 @@ function ProblemDetailContent() {
             </button>
 
             <div className="flex items-center gap-2 mb-1">
-              <Code2 className="w-5 h-5 text-cyan-400" />
+              <Code2 className="w-5 h-5 text-rose-400" />
               <h3 className="text-lg font-bold text-white">Submit a Solution</h3>
             </div>
             <p className="text-xs text-slate-400 mb-4">
@@ -556,7 +557,7 @@ function ProblemDetailContent() {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-200 mb-1">
-                    Solution Title <span className="text-cyan-400">*</span>
+                    Solution Title <span className="text-rose-400">*</span>
                   </label>
                   <input
                     type="text"
@@ -564,13 +565,13 @@ function ProblemDetailContent() {
                     value={solTitle}
                     onChange={(e) => setSolTitle(e.target.value)}
                     placeholder="e.g. Open-GTFS Real-Time Bus Tracker & PWA"
-                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#070A12] text-white text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-200 mb-1">
-                    Description &amp; Approach <span className="text-cyan-400">*</span>
+                    Description &amp; Approach <span className="text-rose-400">*</span>
                   </label>
                   <textarea
                     rows={3}
@@ -578,13 +579,13 @@ function ProblemDetailContent() {
                     value={solDescription}
                     onChange={(e) => setSolDescription(e.target.value)}
                     placeholder="Describe how your solution directly resolves the identified root sub-problems..."
-                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#070A12] text-white text-xs focus:outline-none focus:border-cyan-500 resize-y"
+                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500 resize-y"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-200 mb-1">
-                    GitHub Repository URL <span className="text-cyan-400">*</span>
+                    GitHub Repository URL <span className="text-rose-400">*</span>
                   </label>
                   <input
                     type="url"
@@ -592,7 +593,7 @@ function ProblemDetailContent() {
                     value={solGithub}
                     onChange={(e) => setSolGithub(e.target.value)}
                     placeholder="https://github.com/username/project"
-                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#070A12] text-white text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
@@ -606,7 +607,7 @@ function ProblemDetailContent() {
                       value={solDemo}
                       onChange={(e) => setSolDemo(e.target.value)}
                       placeholder="https://demo.app"
-                      className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#070A12] text-white text-xs focus:outline-none focus:border-cyan-500"
+                      className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500"
                     />
                   </div>
 
@@ -619,7 +620,7 @@ function ProblemDetailContent() {
                       value={solLive}
                       onChange={(e) => setSolLive(e.target.value)}
                       placeholder="https://app.com"
-                      className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#070A12] text-white text-xs focus:outline-none focus:border-cyan-500"
+                      className="w-full px-3 py-2 rounded-lg border border-white/[0.1] bg-[#080B12] text-white text-xs focus:outline-none focus:border-rose-500"
                     />
                   </div>
                 </div>
@@ -635,7 +636,7 @@ function ProblemDetailContent() {
                   <button
                     type="submit"
                     disabled={solSubmitting}
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 shadow-md shadow-cyan-500/25 disabled:opacity-50"
+                    className="btn-primary-glow flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-semibold text-white shadow-md disabled:opacity-50"
                   >
                     {solSubmitting ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />

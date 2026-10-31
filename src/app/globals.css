@@ -1,10 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --background: #06080F;
-  --foreground: #F1F5F9;
-  --card-bg: rgba(13, 17, 28, 0.75);
+  /* Core Obsidian / Deep Slate Background (From Figma Reference) */
+  --background: #0A0D14;
+  --foreground: #F8FAFC;
+  
+  /* Reference Palette: Crimson, Ruby Rose, Hot Pink, Peach Core */
+  --color-primary: #FB4C75;
+  --color-primary-hover: #E11D48;
+  --color-primary-light: #FF8DA6;
+  --color-primary-core: #FFCAD3;
+  --color-primary-glow: rgba(251, 76, 117, 0.3);
+  --color-primary-muted: rgba(251, 76, 117, 0.12);
+  --color-primary-border: rgba(251, 76, 117, 0.3);
+
+  /* Dark Glass Card Surfaces */
+  --card-bg: rgba(12, 16, 25, 0.78);
+  --card-bg-hover: rgba(18, 23, 35, 0.9);
   --card-border: rgba(255, 255, 255, 0.08);
+  --card-border-hover: rgba(251, 76, 117, 0.35);
+
+  /* Text System */
+  --text-primary: #FFFFFF;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
 }
 
 @theme inline {
@@ -21,79 +40,53 @@ body {
   min-height: 100vh;
 }
 
-/* Custom scrollbar for modern sleek look */
+/* Custom sleek scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #06080F;
+  background: #0A0D14;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.14);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(251, 76, 117, 0.4);
 }
 
-/* Ribbed-glass fluting effect */
-.ribbed-glass-overlay {
-  background-image: repeating-linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.035) 0px,
-    rgba(255, 255, 255, 0.035) 1px,
-    transparent 1px,
-    transparent 10px,
-    rgba(0, 0, 0, 0.25) 10px,
-    rgba(0, 0, 0, 0.25) 11px
-  );
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+/* Reference Ribbed Glass CSS utility for consistent borders / glass cards */
+.solvyn-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Narrow flowing gradient band keyframe animations */
-@keyframes flowRibbon {
-  0% {
-    transform: translate3d(-15%, -10%, 0) rotate(-18deg) scale(1.05);
-  }
-  25% {
-    transform: translate3d(5%, 10%, 0) rotate(-14deg) scale(1.15);
-  }
-  50% {
-    transform: translate3d(20%, -5%, 0) rotate(-22deg) scale(1.1);
-  }
-  75% {
-    transform: translate3d(-5%, 15%, 0) rotate(-16deg) scale(1.18);
-  }
-  100% {
-    transform: translate3d(-15%, -10%, 0) rotate(-18deg) scale(1.05);
-  }
+.solvyn-card:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--card-border-hover);
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.5), 0 0 20px -4px rgba(251, 76, 117, 0.15);
 }
 
-@keyframes flowPulse {
-  0%, 100% {
-    opacity: 0.72;
-    filter: blur(48px) saturate(140%);
-  }
-  50% {
-    opacity: 0.92;
-    filter: blur(38px) saturate(160%);
-  }
+/* Button glow effect */
+.btn-primary-glow {
+  background: linear-gradient(135deg, #E11D48 0%, #FB4C75 50%, #FF6B8B 100%);
+  box-shadow: 0 4px 20px -2px rgba(251, 76, 117, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.animate-ribbon {
-  animation: flowRibbon 24s ease-in-out infinite, flowPulse 12s ease-in-out infinite;
-  will-change: transform, opacity;
+.btn-primary-glow:hover {
+  background: linear-gradient(135deg, #BE123C 0%, #E11D48 50%, #FB4C75 100%);
+  box-shadow: 0 6px 24px 0px rgba(251, 76, 117, 0.5);
+  transform: translateY(-1px);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .animate-ribbon {
-    animation: none !important;
-    transform: translate3d(0, 0, 0) rotate(-18deg) scale(1.1) !important;
-    opacity: 0.8 !important;
-  }
+.btn-primary-glow:active {
+  transform: translateY(0);
 }

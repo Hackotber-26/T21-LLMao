@@ -6,13 +6,13 @@ import { Sparkles } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="w-full border-t border-white/[0.06] bg-[#05070D]/90 backdrop-blur-md py-10 mt-auto relative z-10">
+    <footer className="w-full border-t border-white/[0.06] bg-[#0A0D14]/90 backdrop-blur-md py-10 mt-auto relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded bg-gradient-to-tr from-cyan-500 to-indigo-500 flex items-center justify-center p-[1px]">
-              <div className="w-full h-full bg-[#070A12] rounded flex items-center justify-center">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <div className="w-6 h-6 rounded bg-gradient-to-tr from-rose-500 to-pink-500 flex items-center justify-center p-[1px]">
+              <div className="w-full h-full bg-[#0D111A] rounded flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5 text-rose-400" />
               </div>
             </div>
             <span className="text-base font-semibold text-white tracking-tight">Solvyn</span>

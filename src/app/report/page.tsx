@@ -11,7 +11,6 @@ import {
   Layers,
   CheckCircle,
   AlertCircle,
-  HelpCircle,
   Loader2,
   FileText,
   CornerDownRight,
@@ -77,8 +76,8 @@ export default function ReportProblemPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
       {/* Page Header */}
       <div className="text-center mb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/25 bg-cyan-950/40 text-cyan-300 text-xs font-medium mb-4">
-          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-rose-500/30 bg-rose-950/30 text-rose-300 text-xs font-medium mb-4">
+          <Sparkles className="w-3.5 h-3.5 text-rose-400" />
           <span>Natural Language AI Ingestion</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
@@ -92,18 +91,18 @@ export default function ReportProblemPage() {
 
       {result ? (
         /* AI Clustering Result Card */
-        <div className="rounded-2xl border border-white/[0.12] bg-[#0A0F1D]/85 backdrop-blur-xl p-8 shadow-2xl shadow-black/60 space-y-6 animate-in fade-in zoom-in-95 duration-300">
+        <div className="rounded-2xl border border-white/[0.12] bg-[#0C1019]/85 backdrop-blur-xl p-8 shadow-2xl shadow-black/60 space-y-6 animate-in fade-in zoom-in-95 duration-300">
           <div className="flex items-start gap-4 pb-6 border-b border-white/[0.08]">
-            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
               <CheckCircle className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400">
+                <span className="text-xs font-semibold uppercase tracking-wider text-rose-400">
                   AI Clustering Status
                 </span>
                 {result.ai_matching?.confidence && (
-                  <span className="text-xs px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800 text-cyan-300">
+                  <span className="text-xs px-2 py-0.5 rounded bg-rose-950/50 border border-rose-800/50 text-rose-300">
                     {Math.round(result.ai_matching.confidence * 100)}% match confidence
                   </span>
                 )}
@@ -130,7 +129,7 @@ export default function ReportProblemPage() {
               <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
                 <span>
                   Total Community Reports:{' '}
-                  <strong className="text-cyan-300 font-semibold">
+                  <strong className="text-rose-300 font-semibold">
                     {result.problem.report_count}
                   </strong>
                 </span>
@@ -145,8 +144,8 @@ export default function ReportProblemPage() {
 
             {/* Identified Sub-Problem */}
             {result.ai_matching?.sub_problem && (
-              <div className="p-4 rounded-xl border border-indigo-500/20 bg-indigo-950/20">
-                <span className="text-xs font-medium text-indigo-300 flex items-center gap-1.5">
+              <div className="p-4 rounded-xl border border-rose-500/25 bg-rose-950/20">
+                <span className="text-xs font-medium text-rose-300 flex items-center gap-1.5">
                   <CornerDownRight className="w-3.5 h-3.5" />
                   Identified Root Sub-Problem
                 </span>
@@ -172,7 +171,7 @@ export default function ReportProblemPage() {
           <div className="pt-4 flex flex-col sm:flex-row items-center gap-3">
             <Link
               href={`/problems/${result.problem.id}`}
-              className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 shadow-lg shadow-cyan-500/25 transition-all"
+              className="btn-primary-glow w-full sm:w-auto flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white shadow-lg transition-all"
             >
               <span>View Problem Cluster &amp; Solutions</span>
               <ArrowRight className="w-4 h-4" />
@@ -189,7 +188,7 @@ export default function ReportProblemPage() {
         /* Submission Form */
         <form
           onSubmit={handleSubmit}
-          className="rounded-2xl border border-white/[0.1] bg-[#0A0F1D]/80 backdrop-blur-xl p-6 sm:p-8 shadow-2xl shadow-black/50 space-y-6"
+          className="rounded-2xl border border-white/[0.1] bg-[#0C1019]/80 backdrop-blur-xl p-6 sm:p-8 shadow-2xl shadow-black/50 space-y-6"
         >
           {error && (
             <div className="flex items-center gap-2 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm">
@@ -204,7 +203,7 @@ export default function ReportProblemPage() {
               htmlFor="description"
               className="block text-sm font-semibold text-white mb-2"
             >
-              What is the problem you are experiencing? <span className="text-cyan-400">*</span>
+              What is the problem you are experiencing? <span className="text-rose-400">*</span>
             </label>
             <textarea
               id="description"
@@ -212,12 +211,12 @@ export default function ReportProblemPage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Example: I cannot track BMTC buses in real-time. Bus 500D arrivals on the app are constantly incorrect or disappear, causing commuters to wait over 45 minutes on the Outer Ring Road..."
-              className="w-full px-4 py-3.5 rounded-xl border border-white/[0.12] bg-[#070A12]/90 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-y"
+              className="w-full px-4 py-3.5 rounded-xl border border-white/[0.12] bg-[#080B12]/90 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-rose-500/60 focus:ring-2 focus:ring-rose-500/20 transition-all resize-y"
               required
             />
             <div className="flex items-center justify-between mt-1.5 text-xs text-slate-400">
               <span>Be as descriptive as you like. Everyday slang or raw notes are fine.</span>
-              <span className={description.length >= 15 ? 'text-cyan-400' : 'text-slate-500'}>
+              <span className={description.length >= 15 ? 'text-rose-400' : 'text-slate-500'}>
                 {description.length} chars (min 15)
               </span>
             </div>
@@ -230,14 +229,14 @@ export default function ReportProblemPage() {
                 htmlFor="category"
                 className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5"
               >
-                <Layers className="w-3.5 h-3.5 text-cyan-400" />
+                <Layers className="w-3.5 h-3.5 text-rose-400" />
                 Category (Optional)
               </label>
               <select
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#070A12]/90 text-white text-sm focus:outline-none focus:border-cyan-500/60"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#080B12]/90 text-white text-sm focus:outline-none focus:border-rose-500/60"
               >
                 <option value="">Select a category...</option>
                 {CATEGORIES.map((cat) => (
@@ -253,7 +252,7 @@ export default function ReportProblemPage() {
                 htmlFor="location"
                 className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5"
               >
-                <MapPin className="w-3.5 h-3.5 text-indigo-400" />
+                <MapPin className="w-3.5 h-3.5 text-pink-400" />
                 Location / City (Optional)
               </label>
               <input
@@ -262,7 +261,7 @@ export default function ReportProblemPage() {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="e.g. Bengaluru, Karnataka"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#070A12]/90 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500/60"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-white/[0.1] bg-[#080B12]/90 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-rose-500/60"
               />
             </div>
           </div>
@@ -272,7 +271,7 @@ export default function ReportProblemPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 shadow-lg shadow-cyan-500/25 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              className="btn-primary-glow w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-semibold text-sm text-white shadow-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? (
                 <>

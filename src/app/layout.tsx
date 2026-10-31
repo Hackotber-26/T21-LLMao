@@ -18,12 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full dark">
-      <body className="min-h-full flex flex-col relative text-slate-100 bg-[#05070D] antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
-        {/* Persistent animated ribbed-glass background */}
+      <body className="min-h-full flex flex-col relative text-slate-100 bg-[#0A0D14] antialiased selection:bg-rose-500/30 selection:text-rose-200">
+        {/* Persistent animated ribbed-glass background matching Figma reference */}
         <AnimatedBackground />
 
         {/* Global application header inside Suspense */}
-        <Suspense fallback={<div className="h-16 w-full border-b border-white/[0.08] bg-[#05070D]" />}>
+        <Suspense fallback={<div className="h-16 w-full border-b border-white/[0.08] bg-[#0A0D14]" />}>
           <Navbar />
         </Suspense>
 
