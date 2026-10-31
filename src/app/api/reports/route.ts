@@ -15,13 +15,7 @@ import { successResponse, errorResponse } from '@/lib/utils/response';
 export async function POST(request: NextRequest) {
   try {
     const user = await getAuthenticatedUser();
-    
-    // Optional: allow anonymous or require auth. The requirement states:
-    // "Authenticate user. Validate request using Zod."
-    // If unauthenticated, return 401:
-    if (!user) {
-      return errorResponse('UNAUTHORIZED', 'You must be logged in to submit a report', 401);
-    }
+    const userId = user?.id || null;
 
     let body;
     try {
@@ -38,7 +32,7 @@ export async function POST(request: NextRequest) {
     const { original_text, category, location } = parseResult.data;
 
     const result = await ReportsService.submitReport(
-      user.id,
+      userId,
       original_text,
       category,
       location
