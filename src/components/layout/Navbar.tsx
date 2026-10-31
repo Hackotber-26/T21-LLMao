@@ -3,7 +3,8 @@
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sparkles, Plus, Compass, User, Menu, X, Bot } from 'lucide-react';
+import { Sparkles, Plus, Compass, User, Menu, X, Bot, LogIn, LogOut } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 export default function Navbar() {
   return (
@@ -16,11 +17,45 @@ export default function Navbar() {
 function NavbarContent() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  React.useEffect(() => {
+    try {
+      const supabase = createClient();
+      supabase.auth.getUser().then(({ data }) => {
+        setCurrentUser(data.user);
+      });
+
+      const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+        setCurrentUser(session?.user ?? null);
+      });
+
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
+    } catch {
+      // Supabase not configured or offline
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      window.location.href = '/';
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const navLinks = [
     { label: 'Discover', href: '/', icon: Compass },
     { label: 'AI Matcher', href: '/assistant', icon: Bot },
-    { label: 'My Profile', href: '/profile/alex_dev', icon: User },
+    { 
+      label: currentUser ? 'My Profile' : 'Demo Profile', 
+      href: currentUser?.user_metadata?.username ? `/profile/${currentUser.user_metadata.username}` : '/profile/alex_dev', 
+      icon: User 
+    },
   ];
 
   return (
@@ -57,11 +92,43 @@ function NavbarContent() {
           </nav>
         </div>
 
-        {/* Right Action */}
+        {/* Right Actions */}
         <div className="hidden md:flex items-center gap-3">
+          {currentUser ? (
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-slate-300 font-medium">
+                {currentUser.email?.split('@')[0]}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-white/[0.04] transition-colors"
+                title="Sign Out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Logout</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/login"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </Link>
+              <Link
+                href="/register"
+                className="px-3 py-1.5 rounded-md text-xs font-medium text-rose-300 hover:text-rose-200 hover:bg-rose-500/10 border border-rose-500/20 transition-colors"
+              >
+                Register
+              </Link>
+            </div>
+          )}
+
           <Link
             href="/report"
-            className="btn-primary flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium"
+            className="btn-primary flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium ml-1"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Report Problem</span>
@@ -100,7 +167,39 @@ function NavbarContent() {
               </Link>
             );
           })}
-          <div className="pt-2">
+
+          <div className="pt-3 border-t border-white/[0.08] space-y-2">
+            {currentUser ? (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                className="flex items-center justify-center gap-1.5 w-full py-2 rounded-md text-xs font-medium text-rose-400 hover:bg-rose-500/10 border border-rose-500/20"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Logout ({currentUser.email?.split('@')[0]})</span>
+              </button>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium text-slate-300 hover:bg-white/[0.06] border border-white/[0.1]"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Sign In</span>
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center py-2 rounded-md text-xs font-medium text-rose-300 hover:bg-rose-500/10 border border-rose-500/20"
+                >
+                  Register
+                </Link>
+              </div>
+            )}
+
             <Link
               href="/report"
               onClick={() => setMobileMenuOpen(false)}
