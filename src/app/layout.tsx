@@ -18,12 +18,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full dark">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="min-h-full flex flex-col relative text-slate-100 bg-[#0A0D14] antialiased selection:bg-rose-500/30 selection:text-rose-200">
         {/* Persistent animated ribbed-glass background matching Figma reference */}
         <AnimatedBackground />
 
         {/* Global application header inside Suspense */}
-        <Suspense fallback={<div className="h-16 w-full border-b border-white/[0.08] bg-[#0A0D14]" />}>
+        <Suspense fallback={<div className="h-14 w-full border-b border-white/[0.08] bg-[#0A0D14]" />}>
           <Navbar />
         </Suspense>
 
