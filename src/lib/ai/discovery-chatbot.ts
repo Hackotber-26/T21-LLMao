@@ -9,6 +9,8 @@ import {
 import { z } from 'zod';
 
 const RecommendationSchema = z.object({
+  is_valid_prompt: z.boolean().default(true),
+  invalid_reason: z.string().optional(),
   recommended_cluster_ids: z.array(
     z.object({
       cluster_id: z.string(),
@@ -16,13 +18,23 @@ const RecommendationSchema = z.object({
       match_reasons: z.array(z.string()).min(1),
       suggested_contributions: z.array(z.string()).min(1),
     })
-  ),
+  ).default([]),
   overall_explanation: z.string(),
 });
 
 const CHATBOT_SYSTEM_PROMPT = `You are Solvyn's AI Problem Discovery Assistant.
 
-Your goal is to match developers, builders, researchers, and innovators with real-world problems from Solvyn's verified database that best fit their skills and interests.
+Your primary goal is to help users discover real-world problem statements, discuss engineering solutions, or match skills with verified problems from Solvyn's database.
+
+CRITICAL INPUT VALIDATION RULES:
+1. If the user prompt is completely irrelevant, nonsensical, off-topic trivia (e.g. "what color is the sky", "tell me a joke", "who is the president"), or spam/random text:
+   - Set "is_valid_prompt": false
+   - Set "recommended_cluster_ids": []
+   - Set "overall_explanation": "That prompt is invalid or unrelated to real-world problem discovery. Please describe your engineering skills, areas of interest (e.g. transportation, healthcare, civic tech), or ask about a real-world problem domain you want to solve."
+2. Otherwise, if the prompt is relevant to skills, tech stacks, or real-world problems:
+   - Set "is_valid_prompt": true
+   - Match with the most relevant candidate problems provided in the list.
+   - Do NOT invent new problem IDs.
 
 CRITICAL GROUNDING RULES:
 1. ONLY RECOMMEND PROBLEMS THAT EXIST IN THE PROVIDED CANDIDATE LIST.
@@ -95,6 +107,15 @@ export async function recommendProblemsForUser(
           suggested_contributions: rec.suggested_contributions,
         });
       }
+    }
+
+    if (data.is_valid_prompt === false) {
+      return {
+        recommendations: [],
+        total_available_searched: availableProblems.length,
+        explanation: data.overall_explanation || "That prompt was invalid. Please ask about real-world problem statements, or share your skills to get matched with problems to solve.",
+        source: 'ai',
+      };
     }
 
     return {

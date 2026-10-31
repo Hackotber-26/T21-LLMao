@@ -94,8 +94,8 @@ Ground your answers strictly in the problem context. Suggest practical architect
     }));
 
     const profile: UserDiscoveryProfile = {
-      skills: ['TypeScript', 'Full-stack', 'Mobile', 'AI'],
-      interests: ['Civic Tech', 'Transportation', 'Healthcare', 'Public Good'],
+      skills: [],
+      interests: [],
       query: message,
     };
 
