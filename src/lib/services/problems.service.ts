@@ -52,9 +52,30 @@ export class ProblemsService {
       throw new Error(`Failed to fetch problems: ${error.message}`);
     }
 
+    const problemsList = (data as Problem[]) || [];
+
+    // Fetch actual solution counts per problem
+    let solutionCountsMap: Record<string, number> = {};
+    if (problemsList.length > 0) {
+      const problemIds = problemsList.map((p) => p.id);
+      const { data: solRows } = await supabase
+        .from('solutions')
+        .select('problem_id')
+        .in('problem_id', problemIds);
+
+      (solRows || []).forEach((row) => {
+        solutionCountsMap[row.problem_id] = (solutionCountsMap[row.problem_id] || 0) + 1;
+      });
+    }
+
+    const itemsWithCounts = problemsList.map((p) => ({
+      ...p,
+      solution_count: solutionCountsMap[p.id] || 0,
+    }));
+
     const total = count || 0;
     return {
-      items: (data as Problem[]) || [],
+      items: itemsWithCounts,
       pagination: {
         page,
         limit,

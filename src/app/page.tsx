@@ -279,7 +279,11 @@ export default function HomePage() {
         ) : problems.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {problems.map((problem) => (
-              <ProblemCard key={problem.id} problem={problem} solutionCount={1} />
+              <ProblemCard
+                key={problem.id}
+                problem={problem}
+                solutionCount={(problem as any).solution_count ?? 0}
+              />
             ))}
           </div>
         ) : (

@@ -18,7 +18,15 @@ export async function GET(
     }
 
     const user = await getAuthenticatedUser();
-    const problem = await ProblemsService.getProblemById(id, user?.id);
+    let problem = await ProblemsService.getProblemById(id, user?.id);
+
+    if (!problem) {
+      // Check mock problems fallback from lib/api
+      const { MOCK_PROBLEM_DETAILS } = await import('@/lib/api');
+      if (MOCK_PROBLEM_DETAILS[id]) {
+        problem = MOCK_PROBLEM_DETAILS[id];
+      }
+    }
 
     if (!problem) {
       return errorResponse('NOT_FOUND', 'Problem not found', 404);

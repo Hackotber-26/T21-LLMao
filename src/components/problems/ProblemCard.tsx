@@ -10,7 +10,7 @@ interface ProblemCardProps {
   solutionCount?: number;
 }
 
-export default function ProblemCard({ problem, solutionCount = 1 }: ProblemCardProps) {
+export default function ProblemCard({ problem, solutionCount = 0 }: ProblemCardProps) {
   const urgencyStyles = {
     low: 'text-slate-400 border-slate-700 bg-slate-900/40',
     medium: 'text-amber-400 border-amber-500/30 bg-amber-950/20',
