@@ -14,10 +14,18 @@ export const PROBLEM_CATEGORIES = [
   'Finance',
   'Technology',
   'Community',
+  'Housing',
+  'Employment',
+  'Public Services',
+  'Sanitation',
+  'Legal Rights',
+  'Consumer Rights',
+  'Disaster Relief',
   'Other',
 ] as const;
 
-export type ProblemCategory = (typeof PROBLEM_CATEGORIES)[number];
+export type StandardProblemCategory = (typeof PROBLEM_CATEGORIES)[number];
+export type ProblemCategory = StandardProblemCategory | (string & {});
 
 export const ProblemUrgencySchema = z.enum(['low', 'medium', 'high', 'critical']);
 export type ProblemUrgency = z.infer<typeof ProblemUrgencySchema>;

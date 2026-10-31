@@ -3,6 +3,7 @@ import {
   ExistingCluster,
   IdentifiedSubProblemArea,
   ProblemCategory,
+  StandardProblemCategory,
   ProblemClassificationResult,
   ProblemReport,
   ProblemSubmissionInput,
@@ -25,8 +26,8 @@ const STOP_WORDS = new Set([
   'have', 'has', 'had', 'having', 'get', 'gets', 'got', 'cannot', 'cant', 'also', 'many',
 ]);
 
-const CATEGORY_KEYWORDS: Record<ProblemCategory, string[]> = {
-  Transportation: ['bus', 'bmtc', 'metro', 'train', 'traffic', 'commute', 'transit', 'vehicle', 'route', 'tracking', 'signal', 'auto', 'fare'],
+const CATEGORY_KEYWORDS: Record<StandardProblemCategory, string[]> = {
+  Transportation: ['bus', 'bmtc', 'metro', 'train', 'traffic', 'commute', 'transit', 'vehicle', 'route', 'transit tracking', 'signal', 'auto', 'fare'],
   Healthcare: ['hospital', 'doctor', 'clinic', 'medicine', 'phc', 'patient', 'insulin', 'ambulance', 'health', 'disease', 'medical', 'prescription'],
   Education: ['school', 'college', 'teacher', 'student', 'classroom', 'exam', 'tuition', 'syllabus', 'education', 'books', 'university'],
   Environment: ['garbage', 'pollution', 'lake', 'waste', 'smoke', 'toxic', 'river', 'plastic', 'burning', 'sewage', 'tree', 'cleanliness', 'odor'],
@@ -36,8 +37,36 @@ const CATEGORY_KEYWORDS: Record<ProblemCategory, string[]> = {
   Finance: ['bank', 'atm', 'loan', 'payment', 'upi', 'fraud', 'tax', 'interest', 'finances', 'subsidy'],
   Technology: ['app', 'software', 'website', 'bug', 'crash', 'ui', 'interface', 'ux', 'server', 'login', 'network', 'digital'],
   Community: ['park', 'safety', 'noise', 'stray', 'dogs', 'theft', 'harassment', 'community', 'playground', 'lighting', 'neighbor'],
+  Housing: ['housing', 'rent', 'tenant', 'landlord', 'apartment', 'shelter', 'eviction', 'slum', 'homeless', 'property'],
+  Employment: ['job', 'employment', 'wage', 'salary', 'worker', 'unemployment', 'labor', 'workplace', 'hiring', 'laborer'],
+  'Public Services': ['ration', 'pension', 'aadhaar', 'voter', 'certificate', 'passport', 'municipal', 'bureaucracy', 'welfare', 'civic'],
+  Sanitation: ['toilet', 'toilets', 'sewage', 'garbage', 'trash', 'drainage', 'sweeper', 'septic', 'scavenging', 'sanitation'],
+  'Legal Rights': ['legal', 'court', 'lawyer', 'bail', 'prison', 'prisoner', 'detention', 'custody', 'police', 'undertrial', 'justice'],
+  'Consumer Rights': ['consumer', 'billing', 'telecom', 'deceptive', 'hidden fee', 'unwanted subscription', 'overcharging', 'refund'],
+  'Disaster Relief': ['flood', 'earthquake', 'disaster', 'cyclone', 'relief', 'evacuation', 'shelter camp', 'rehabilitation'],
   Other: ['general', 'miscellaneous', 'other'],
 };
+
+/**
+ * Safely tests whether a keyword or phrase appears in the text without substring false positives.
+ * For single-word keywords (e.g. 'bus', 'road', 'fare'), requires word boundaries (\b).
+ * Supports standard English plural variants (-s, -es, and consonant+y -> -ies)
+ * without broad matching that causes false substring positives.
+ */
+export function keywordMatchesText(lowerText: string, kw: string): boolean {
+  const cleanKw = kw.trim().toLowerCase();
+  if (!cleanKw) return false;
+
+  // Words ending in consonant + y (e.g. community -> communities, disability -> disabilities, subsidy -> subsidies)
+  const consonantYMatch = cleanKw.match(/^([a-z]+[^aeiou])y$/i);
+  if (consonantYMatch) {
+    const stem = consonantYMatch[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`\\b${stem}(?:y|ies)\\b`, 'i').test(lowerText);
+  }
+
+  const escaped = cleanKw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`\\b${escaped}(?:s|es)?\\b`, 'i').test(lowerText);
+}
 
 /**
  * Tokenize and extract clean keywords
@@ -96,7 +125,7 @@ export function inferCategoryFromText(text: string): ProblemCategory {
   for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS) as [ProblemCategory, string[]][]) {
     let score = 0;
     for (const kw of keywords) {
-      if (lower.includes(kw)) {
+      if (keywordMatchesText(lower, kw)) {
         score += 1;
       }
     }
@@ -146,6 +175,27 @@ function inferTargetUsers(category: ProblemCategory, text: string): string[] {
   if (category === 'Accessibility') {
     return ['Persons with disabilities', 'Elderly citizens'];
   }
+  if (category === 'Housing') {
+    return ['Tenants', 'Homeowners', 'Local residents'];
+  }
+  if (category === 'Employment') {
+    return ['Job seekers', 'Workers', 'Employees'];
+  }
+  if (category === 'Public Services') {
+    return ['Citizens', 'Public service applicants', 'Local community members'];
+  }
+  if (category === 'Sanitation') {
+    return ['Local residents', 'Sanitation workers', 'Pedestrians'];
+  }
+  if (category === 'Legal Rights') {
+    return ['Under-trial prisoners', 'Citizens', 'Legal aid seekers'];
+  }
+  if (category === 'Consumer Rights') {
+    return ['Consumers', 'Subscribers', 'Customers'];
+  }
+  if (category === 'Disaster Relief') {
+    return ['Disaster victims', 'Displaced residents', 'Local communities'];
+  }
   return ['General public', 'Local community members'];
 }
 
@@ -159,9 +209,12 @@ export function fallbackValidateAndUnderstand(input: ProblemSubmissionInput): Pr
 
   // Even short problems (e.g. "Potholes on 80ft road") are valid real-world issues
   const isValid = !spam && combinedText.length >= 6;
-  const category = (input.submittedCategory as ProblemCategory) && PROBLEM_CATEGORIES.includes(input.submittedCategory as ProblemCategory)
-    ? (input.submittedCategory as ProblemCategory)
-    : inferCategoryFromText(combinedText);
+  const category: ProblemCategory =
+    input.submittedCategory && (PROBLEM_CATEGORIES as readonly string[]).includes(input.submittedCategory)
+      ? input.submittedCategory
+      : input.submittedCategory && input.submittedCategory.trim().length > 0
+      ? input.submittedCategory.trim()
+      : inferCategoryFromText(combinedText);
 
   const urgency = inferUrgencyFromText(combinedText);
   const targetUsers = inferTargetUsers(category, combinedText);
@@ -169,10 +222,30 @@ export function fallbackValidateAndUnderstand(input: ProblemSubmissionInput): Pr
   // Sub-problem extraction
   let subProblem = 'General Issue';
   const lower = combinedText.toLowerCase();
-  if (lower.includes('interface') || lower.includes('ui') || lower.includes('ux') || lower.includes('navigation') || lower.includes('confusing')) {
+  if (
+    lower.includes('interface') ||
+    /\bui\b/i.test(lower) ||
+    /\bux\b/i.test(lower) ||
+    lower.includes('navigation') ||
+    lower.includes('confusing')
+  ) {
     subProblem = 'UI/UX & Usability';
-  } else if (lower.includes('tracking') || lower.includes('live') || lower.includes('real time') || lower.includes('gps')) {
-    subProblem = 'Real-time Tracking & Visibility';
+  } else if (
+    lower.includes('track') ||
+    lower.includes('tracking') ||
+    lower.includes('live') ||
+    lower.includes('real time') ||
+    lower.includes('location') ||
+    lower.includes('gps')
+  ) {
+    if (
+      category === 'Transportation' &&
+      (lower.includes('bus') || lower.includes('bmtc'))
+    ) {
+      subProblem = 'Real-time Bus Tracking';
+    } else {
+      subProblem = 'Real-time Tracking & Visibility';
+    }
   } else if (lower.includes('delay') || lower.includes('schedule') || lower.includes('frequency') || lower.includes('late')) {
     subProblem = 'Scheduling & Timeliness';
   } else if (lower.includes('clean') || lower.includes('smell') || lower.includes('dirty') || lower.includes('waste')) {
@@ -225,9 +298,11 @@ export function fallbackFindRelatedProblems(
 ): ClusterMatchingResult {
   const combinedText = `${newProblem.title || ''} ${newProblem.description}`.toLowerCase();
   const inputKeywords = new Set(extractKeywordsFromText(combinedText));
-  const inputCategory =
-    newProblem.submittedCategory && PROBLEM_CATEGORIES.includes(newProblem.submittedCategory as any)
-      ? (newProblem.submittedCategory as ProblemCategory)
+  const inputCategory: ProblemCategory =
+    newProblem.submittedCategory && (PROBLEM_CATEGORIES as readonly string[]).includes(newProblem.submittedCategory)
+      ? newProblem.submittedCategory
+      : newProblem.submittedCategory && newProblem.submittedCategory.trim().length > 0
+      ? newProblem.submittedCategory.trim()
       : inferCategoryFromText(combinedText);
 
   let bestCluster: ExistingCluster | null = null;
@@ -286,8 +361,8 @@ export function fallbackFindRelatedProblems(
   let subProblem = 'General Sub-Problem';
   if (
     combinedText.includes('interface') ||
-    combinedText.includes('ui') ||
-    combinedText.includes('ux') ||
+    /\bui\b/i.test(combinedText) ||
+    /\bux\b/i.test(combinedText) ||
     combinedText.includes('confusing') ||
     combinedText.includes('navigation')
   ) {
@@ -299,7 +374,14 @@ export function fallbackFindRelatedProblems(
     combinedText.includes('location') ||
     combinedText.includes('gps')
   ) {
-    subProblem = 'Real-time Bus Tracking';
+    if (
+      inputCategory === 'Transportation' &&
+      (combinedText.includes('bus') || combinedText.includes('bmtc'))
+    ) {
+      subProblem = 'Real-time Bus Tracking';
+    } else {
+      subProblem = 'Real-time Tracking & Visibility';
+    }
   } else {
     const topKeywords = Array.from(inputKeywords).slice(0, 2);
     if (topKeywords.length > 0) {
@@ -364,7 +446,8 @@ export function fallbackGenerateStructuredProblem(
   // Group reports by sub-problem
   const subProblemGroups = new Map<string, { count: number; quotes: string[] }>();
   const urgencyCounts = { low: 0, medium: 0, high: 0, critical: 0 };
-  const allTargetUsers = new Set<string>();
+  const reportTargetUsersList: string[] = [];
+  const seenUsers = new Set<string>();
 
   for (const report of reports) {
     const sp = report.sub_problem?.trim() || 'General Issue';
@@ -382,15 +465,29 @@ export function fallbackGenerateStructuredProblem(
       urgencyCounts.medium += 1;
     }
 
-    if (report.target_users) {
-      for (const u of report.target_users) allTargetUsers.add(u);
+    if (report.target_users && Array.isArray(report.target_users)) {
+      for (const u of report.target_users) {
+        if (typeof u === 'string') {
+          const trimmed = u.trim();
+          const normalized = trimmed.toLowerCase();
+          if (trimmed.length > 0 && !seenUsers.has(normalized)) {
+            seenUsers.add(normalized);
+            reportTargetUsersList.push(trimmed);
+          }
+        }
+      }
     }
   }
+
+  const resolvedTargetUsers =
+    reportTargetUsersList.length > 0
+      ? reportTargetUsersList
+      : ['Affected community members', 'General public'];
 
   const identifiedAreas: IdentifiedSubProblemArea[] = Array.from(subProblemGroups.entries())
     .map(([areaName, data]) => ({
       area_name: areaName,
-      description: `Reported by ${data.count} commuter(s)/user(s) in Solvyn reports.`,
+      description: `Reported by ${data.count} citizen(s)/user(s) in Solvyn verified reports.`,
       report_count: data.count,
       percentage: totalReports > 0 ? Math.round((data.count / totalReports) * 1000) / 10 : 0,
       sample_quotes: data.quotes,
@@ -399,13 +496,13 @@ export function fallbackGenerateStructuredProblem(
 
   return {
     title: cluster.title,
-    description: `Aggregated analysis of ${totalReports} verified report(s) regarding ${cluster.title}. Commuters and citizens highlight challenges across multiple key operational areas.`,
+    description: `Aggregated analysis of ${totalReports} verified report(s) regarding ${cluster.title}. Impacted stakeholders highlight challenges across multiple key operational areas.`,
     category: cluster.category,
     identified_areas: identifiedAreas,
-    target_users: allTargetUsers.size > 0 ? Array.from(allTargetUsers) : ['General public', 'Daily commuters'],
+    target_users: resolvedTargetUsers,
     urgency_breakdown: urgencyCounts,
     total_reports: totalReports,
-    recommended_solution_focus: identifiedAreas.map((a) => `Improve ${a.area_name} based on commuter reports`),
+    recommended_solution_focus: identifiedAreas.map((a) => `Address ${a.area_name} based on verified citizen reports`),
     source: 'fallback',
     generated_at: new Date().toISOString(),
   };

@@ -1,6 +1,7 @@
 import { executeGroqStructuredQuery } from './groq-client';
 import { fallbackValidateAndUnderstand } from './fallback-engine';
 import {
+  ProblemCategory,
   ProblemClassificationResult,
   ProblemSubmissionInput,
   ProblemUnderstanding,
@@ -29,7 +30,15 @@ EVALUATION RULES:
    - Finance
    - Technology
    - Community
+   - Housing
+   - Employment
+   - Public Services
+   - Sanitation
+   - Legal Rights
+   - Consumer Rights
+   - Disaster Relief
    - Other
+   (If the problem clearly belongs to another recognized civic domain, provide that domain name rather than forcing into an unrelated category).
 6. Extract clean, normalized attributes:
    - "normalized_title": Concise, professional title (e.g., "Improving BMTC Bus Tracking", "Koramangala Pothole Safety Hazard").
    - "problem_description": Clear, well-formed summary of the core issue.
@@ -87,11 +96,9 @@ export async function classifyProblem(
 ): Promise<ProblemClassificationResult> {
   const validationResult = await validateProblem(input);
 
-  const normalizedCategory = (
-    PROBLEM_CATEGORIES.includes(validationResult.category as any)
-      ? validationResult.category
-      : 'Other'
-  ) as any;
+  const rawCat = validationResult.category?.trim();
+  const normalizedCategory: ProblemCategory =
+    rawCat && rawCat.length > 0 ? rawCat : 'Other';
 
   return {
     category: normalizedCategory,

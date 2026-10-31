@@ -13,27 +13,82 @@ const CLUSTERING_SYSTEM_PROMPT = `You are the lead AI problem clustering and ded
 Your job is to compare a new citizen problem report against a pre-filtered list of candidate problem clusters from the database.
 
 CRITICAL CLUSTERING PRINCIPLES:
-1. Hierarchical Clustering (Broad Problem Cluster vs. Specific Sub-Problem):
+1. Core Problem Scope & Clustering Boundaries:
+   - Sharing a category or broad domain is NOT sufficient for a match! (e.g., Two reports both in "Healthcare" or "Transportation" must remain separate if they describe different institutions, distinct facilities, or unrelated issues).
+   - Reports must share a meaningful underlying problem context and common scope.
+   - Different institutions, organizations, infrastructure systems, or unrelated root causes should remain separate clusters unless the supplied evidence establishes a genuine common parent problem.
+   - Different sub-problems may share a parent cluster ONLY when that relationship is justified by a shared operational, institutional, or system-level context.
+
+2. Hierarchical Clustering (Broad Problem Cluster vs. Specific Sub-Problem):
    - Multiple reports can belong to the SAME broader cluster while addressing DIFFERENT sub-problems!
-   - Example A: "The BMTC app has a terrible interface."
-   - Example B: "Navigating the BMTC app is very confusing."
-     -> Both belong to the "BMTC Commuter Experience" cluster, with sub-problem: "UI/UX & App Navigation".
-   - Example C: "I cannot track BMTC buses in real time."
-   - Example D: "We need an app that shows live bus locations."
-     -> Both belong to the "BMTC Commuter Experience" cluster, with sub-problem: "Real-time Bus Tracking".
-   - Notice: Reports A & B share the UI/UX sub-problem. Reports C & D share the Live Tracking sub-problem. All four belong to the broader BMTC Commuter Experience cluster!
+   - Transit Domain Example:
+     - Example A: "The BMTC app has a terrible interface."
+     - Example B: "Navigating the BMTC app is very confusing."
+       -> Both belong to the "BMTC Commuter Experience" cluster, with sub-problem: "UI/UX & App Navigation".
+     - Example C: "I cannot track BMTC buses in real time."
+     - Example D: "We need an app that shows live bus locations."
+       -> Both belong to the "BMTC Commuter Experience" cluster, with sub-problem: "Real-time Bus Tracking".
+     -> Notice: Reports A & B share the UI/UX sub-problem. Reports C & D share the Live Tracking sub-problem. All four belong to the broader BMTC Commuter Experience cluster because they share the same transit agency and mobile service ecosystem!
+   - Healthcare Domain Example:
+     - Example E: "Patients wait over 4 hours just to see an outpatient doctor for routine checkups."
+       -> Belongs to "Government Hospital Service Bottlenecks", with sub-problem: "Outpatient Wait Times".
+     - Example F: "The civil hospital pharmacy is completely out of stock of essential insulin and antibiotics."
+       -> Belongs to "Government Hospital Service Bottlenecks", with sub-problem: "Essential Medicine Shortages".
+     -> Notice: Both belong to the same broader hospital healthcare cluster because they describe service delivery at the same hospital network, while clearly distinguishing outpatient appointment delays from pharmacy supply stockouts!
 
-2. Decision Rules:
+3. Decision Rules:
    - "MATCH_EXISTING": The new report clearly falls under the scope of one of the candidate clusters. Specify "matched_cluster_id" and identify the precise "sub_problem".
-   - "NEW_CLUSTER": The report represents a genuinely different issue, different organization, or different infrastructure system not covered by any candidate.
-   - "NEEDS_REVIEW": There is borderline or ambiguous similarity (confidence between 0.40 and 0.70), or conflicting domain overlap. Flag for human moderation rather than making a reckless automated merge.
+   - "NEW_CLUSTER": The report represents a genuinely different issue, different organization, or different infrastructure system not covered by any candidate. Set "matched_cluster_id" and "matched_cluster_title" to null.
+   - "NEEDS_REVIEW": There is borderline or ambiguous similarity (confidence between 0.50 and 0.74), or conflicting domain overlap. Flag for human moderation rather than making a reckless automated merge.
 
-3. Confidence Scoring:
-   - 0.80 - 1.00: High confidence match or clear new cluster.
-   - 0.50 - 0.79: Moderate/uncertain overlap -> Mark "NEEDS_REVIEW" and set "flagged_for_review": true.
-   - 0.00 - 0.49: Low match with existing candidates -> Mark "NEW_CLUSTER".
+4. Confidence Scoring:
+   - 0.75 - 1.00: High confidence match or clear new cluster ("flagged_for_review": false).
+   - 0.50 - 0.74: Moderate/uncertain overlap -> Mark "NEEDS_REVIEW" and set "flagged_for_review": true.
+   - 0.00 - 0.49: Low match with existing candidates -> Mark "NEW_CLUSTER" ("flagged_for_review": false).
 
-4. Never merge reports from unrelated domains (e.g., Do NOT merge a hospital medicine shortage report into a bus transit cluster!).`;
+5. Strict Domain & Institutional Isolation:
+   - Never merge reports from unrelated domains (e.g., Do NOT merge a hospital medicine shortage report into a bus transit cluster!).
+   - Never merge reports across separate institutions, agencies, or independent systems unless there is clear evidence of a unified parent cluster.
+
+5. REQUIRED OUTPUT JSON SCHEMA:
+You must respond ONLY with a valid JSON object. Do not enclose in markdown blocks, code fences, or add explanatory text outside the JSON.
+The JSON object must use these EXACT property names:
+- "match_decision": Must be exactly one of "MATCH_EXISTING", "NEW_CLUSTER", or "NEEDS_REVIEW". Never use "decision", "match", or other variations.
+- "matched_cluster_id": The exact "id" string of the matched candidate cluster from candidate_clusters, or null if match_decision is "NEW_CLUSTER".
+- "matched_cluster_title": The exact "title" string of the matched candidate cluster, or null if match_decision is "NEW_CLUSTER".
+- "sub_problem": A concise string naming the specific sub-problem (e.g., "UI/UX & App Navigation", "Real-time Bus Tracking").
+- "confidence": A float number between 0.0 and 1.0 indicating your confidence in this clustering decision.
+- "reason": A string explaining why the report matches or differs from the candidates. Never use "explanation", "rationale", or "analysis".
+- "flagged_for_review": A boolean (true or false). Must be true if match_decision is "NEEDS_REVIEW" or confidence is between 0.50 and 0.74; otherwise false.
+- "candidate_similarity_scores": An object mapping each supplied candidate cluster "id" to a similarity float between 0.0 and 1.0.
+
+Example of matching an existing cluster:
+{
+  "match_decision": "MATCH_EXISTING",
+  "matched_cluster_id": "cluster-bmtc-101",
+  "matched_cluster_title": "BMTC Commuter Experience Improvement",
+  "sub_problem": "Real-time Bus Tracking",
+  "confidence": 0.92,
+  "reason": "The report specifically describes missing live bus tracking, which belongs to the BMTC commuter experience under the real-time bus tracking sub-problem.",
+  "flagged_for_review": false,
+  "candidate_similarity_scores": {
+    "cluster-bmtc-101": 0.92
+  }
+}
+
+Example of creating a new cluster:
+{
+  "match_decision": "NEW_CLUSTER",
+  "matched_cluster_id": null,
+  "matched_cluster_title": null,
+  "sub_problem": "Primary Health Clinic Cold Storage",
+  "confidence": 0.95,
+  "reason": "The report describes rural clinic insulin refrigeration, which does not match any candidate transit clusters.",
+  "flagged_for_review": false,
+  "candidate_similarity_scores": {
+    "cluster-bmtc-101": 0.05
+  }
+}`;
 
 /**
  * Pre-filters and scores candidate clusters by category and keyword overlap
