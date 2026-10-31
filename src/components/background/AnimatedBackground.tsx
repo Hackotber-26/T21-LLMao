@@ -354,6 +354,8 @@ export default function AnimatedBackground() {
         ref={canvasRef}
         className="absolute inset-0 w-full h-full block"
       />
+      {/* Subtle center reading scrim to ensure 100% text readability over glowing ribbon */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(10,13,20,0.68)_0%,rgba(10,13,20,0.28)_55%,transparent_90%)] pointer-events-none" />
     </div>
   );
 }

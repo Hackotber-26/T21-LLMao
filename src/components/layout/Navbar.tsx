@@ -26,13 +26,10 @@ function NavbarContent() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-[#0A0D14]/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        {/* Brand Wordmark */}
+        {/* Brand Wordmark - Text Only */}
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-5 h-5 rounded bg-rose-600 flex items-center justify-center shadow-sm">
-              <Sparkles className="w-3 h-3 text-white" />
-            </div>
-            <span className="text-base font-semibold tracking-tight text-white">
+          <Link href="/" className="inline-flex items-center group">
+            <span className="text-lg font-bold tracking-tight text-white hover:text-slate-200 transition-colors">
               Solvyn
             </span>
           </Link>

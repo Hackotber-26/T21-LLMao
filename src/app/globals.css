@@ -14,8 +14,8 @@
 
   /* Surfaces & Structural Borders */
   --surface-base: #0A0D14;
-  --surface-card: rgba(12, 16, 24, 0.85);
-  --surface-card-hover: rgba(16, 22, 34, 0.95);
+  --surface-card: rgba(12, 16, 24, 0.88);
+  --surface-card-hover: rgba(16, 22, 34, 0.96);
   --surface-overlay: #101522;
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.14);
@@ -54,28 +54,38 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Disciplined Production UI Components */
 .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
   background-color: #E11D48;
   color: #FFFFFF;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
   transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .btn-primary:hover {
   background-color: #BE123C;
-  border-color: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .btn-primary:active {
@@ -83,29 +93,46 @@ body {
 }
 
 .btn-secondary {
-  background-color: rgba(255, 255, 255, 0.04);
-  color: #E2E8F0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: rgba(12, 16, 24, 0.90);
+  backdrop-filter: blur(12px);
+  color: #F8FAFC;
+  font-size: 0.875rem;
   font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.18);
+  background-color: rgba(20, 28, 42, 0.96);
+  border-color: rgba(255, 255, 255, 0.25);
   color: #FFFFFF;
 }
 
+.btn-secondary:active {
+  transform: translateY(1px);
+}
+
 .card-structured {
-  background-color: rgba(12, 16, 24, 0.85);
+  background-color: rgba(12, 16, 24, 0.88);
+  backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card-structured:hover {
   border-color: rgba(255, 255, 255, 0.16);
   background-color: rgba(15, 20, 32, 0.95);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
 }

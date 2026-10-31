@@ -46,11 +46,8 @@ export default function LoginPage() {
     <div className="max-w-sm mx-auto px-4 py-16 sm:py-20">
       <div className="card-structured p-7 space-y-6">
         <div className="text-center space-y-1">
-          <div className="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white mx-auto mb-3">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <h1 className="text-xl font-semibold text-white tracking-tight">Sign in to Solvyn</h1>
-          <p className="text-xs text-slate-400">Discover real problems and submit verified builds</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Solvyn</h1>
+          <p className="text-xs text-slate-400">Sign in to discover real problems and submit verified builds</p>
         </div>
 
         {error && (
