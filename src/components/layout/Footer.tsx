@@ -25,6 +25,9 @@ export default function Footer() {
             <Link href="/" className="hover:text-white transition-colors">
               Discover
             </Link>
+            <Link href="/assistant" className="hover:text-white transition-colors">
+              AI Matcher
+            </Link>
             <Link href="/report" className="hover:text-white transition-colors">
               Report Problem
             </Link>

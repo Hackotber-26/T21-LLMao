@@ -3,7 +3,7 @@
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sparkles, PlusCircle, Compass, User, Menu, X } from 'lucide-react';
+import { Sparkles, PlusCircle, Compass, User, Menu, X, Bot } from 'lucide-react';
 
 export default function Navbar() {
   return (
@@ -18,8 +18,9 @@ function NavbarContent() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Discover Problems', href: '/', icon: Compass },
-    { label: 'Report a Problem', href: '/report', icon: PlusCircle },
+    { label: 'Discover', href: '/', icon: Compass },
+    { label: 'AI Matcher', href: '/assistant', icon: Bot },
+    { label: 'Report Problem', href: '/report', icon: PlusCircle },
     { label: 'My Profile', href: '/profile/alex_dev', icon: User },
   ];
 
