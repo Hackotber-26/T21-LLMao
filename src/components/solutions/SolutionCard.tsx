@@ -95,17 +95,17 @@ export function SolutionCard({
   return (
     <article
       data-testid={`solution-card-${id}`}
-      className={`group relative flex flex-col justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-xs hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 transition-all ${className}`}
+      className={`card-structured rounded-xl border border-white/[0.08] bg-[#0C1018]/90 p-5 space-y-3 hover:border-white/[0.16] hover:bg-[#0F1420] transition-all ${className}`}
     >
       <div>
-        {/* Top Header: Solver Info & Submission Date */}
-        <div className="flex items-start justify-between gap-3">
+        {/* Top Header: Solver Info & Like Button */}
+        <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             {/* Solver Profile Avatar with Fallback */}
             {solver?.username ? (
               <Link
                 href={`/profile/${solver.username}`}
-                className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-semibold text-xs shadow-xs hover:opacity-90 transition-opacity"
+                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg overflow-hidden bg-[#080B12] border border-white/[0.1] text-rose-400 font-semibold text-xs hover:border-white/[0.25] transition-colors"
                 aria-label={`View ${solverName}'s profile`}
               >
                 {solver?.avatar_url ? (
@@ -113,7 +113,7 @@ export function SolutionCard({
                     src={solver.avatar_url}
                     alt={solverName}
                     fill
-                    sizes="40px"
+                    sizes="36px"
                     className="object-cover"
                   />
                 ) : (
@@ -121,13 +121,13 @@ export function SolutionCard({
                 )}
               </Link>
             ) : (
-              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-semibold text-xs shadow-xs">
+              <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg overflow-hidden bg-[#080B12] border border-white/[0.1] text-rose-400 font-semibold text-xs">
                 {solver?.avatar_url ? (
                   <Image
                     src={solver.avatar_url}
                     alt={solverName}
                     fill
-                    sizes="40px"
+                    sizes="36px"
                     className="object-cover"
                   />
                 ) : (
@@ -136,28 +136,27 @@ export function SolutionCard({
               </div>
             )}
 
-            {/* Solver Name & Handle */}
+            {/* Title & Solver Handle */}
             <div className="min-w-0">
-              {solver?.username ? (
-                <Link
-                  href={`/profile/${solver.username}`}
-                  className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:text-emerald-600 dark:hover:text-emerald-400 hover:underline transition-colors block"
-                >
-                  {solverName}
-                </Link>
-              ) : (
-                <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                  {solverName}
-                </p>
-              )}
-              <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
-                {solverHandle ? (
-                  <span>{solverHandle}</span>
+              <h3 className="text-sm font-semibold text-white hover:text-rose-300 transition-colors leading-tight">
+                {title}
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Built by{' '}
+                {solver?.username ? (
+                  <Link
+                    href={`/profile/${solver.username}`}
+                    className="text-slate-200 hover:text-rose-400 font-medium transition-colors"
+                  >
+                    {solverHandle}
+                  </Link>
                 ) : (
-                  <span>Verified Contributor</span>
+                  <strong className="text-slate-200">{solverName}</strong>
                 )}
-                <span className="mx-1.5 text-zinc-300 dark:text-zinc-600">•</span>
-                <time dateTime={created_at}>{formattedDate}</time>
+                <span className="mx-1.5 text-slate-600">•</span>
+                <time dateTime={created_at} className="text-[11px] text-slate-500 font-mono">
+                  {formattedDate}
+                </time>
               </p>
             </div>
           </div>
@@ -173,32 +172,27 @@ export function SolutionCard({
 
         {/* Problem Context Reference (if requested and present) */}
         {showProblemContext && problem && (
-          <div className="mt-3.5">
+          <div className="mt-2.5">
             <Link
               href={`/problems/${problem.id}`}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
+              className="inline-flex items-center gap-1 text-xs text-rose-400 hover:text-rose-300 font-medium shrink-0"
             >
-              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
               <span>Problem: {problem.title}</span>
+              <svg className="w-3 h-3 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
             </Link>
           </div>
         )}
 
-        {/* Solution Title */}
-        <h3 className="mt-4 text-base sm:text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-          {title}
-        </h3>
-
         {/* Description Excerpt with Expand Option */}
-        <div className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+        <div className="mt-2.5 text-xs text-slate-300 leading-relaxed font-normal">
           <p className="whitespace-pre-line">{displayDescription}</p>
           {isLongDescription && (
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 focus:outline-hidden"
+              className="mt-1 text-xs font-semibold text-rose-400 hover:text-rose-300 focus:outline-hidden"
             >
               {isExpanded ? 'Show less' : 'Read more'}
             </button>
@@ -207,7 +201,7 @@ export function SolutionCard({
       </div>
 
       {/* Footer: External Resource Links */}
-      <div className="mt-6 border-t border-zinc-100 dark:border-zinc-800/80 pt-4">
+      <div className="pt-2 border-t border-white/[0.06]">
         <ExternalResourceLinks
           githubUrl={github_url}
           liveUrl={live_url}

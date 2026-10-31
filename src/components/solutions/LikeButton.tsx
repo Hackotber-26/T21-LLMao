@@ -173,30 +173,25 @@ export function LikeButton({
         aria-label={hasLiked ? `Unlike solution (${likeCount})` : `Like solution (${likeCount})`}
         aria-pressed={hasLiked}
         data-testid={`like-button-${solutionId}`}
-        className={`group relative inline-flex items-center rounded-full font-semibold transition-all duration-150 select-none focus:outline-hidden focus:ring-2 focus:ring-rose-500/20 active:scale-95 disabled:opacity-75 disabled:cursor-not-allowed border ${sizeClasses} ${
+        className={`group relative inline-flex items-center rounded-md font-medium transition-colors select-none focus:outline-hidden focus:ring-1 focus:ring-rose-500/50 active:scale-95 disabled:opacity-75 disabled:cursor-not-allowed border ${sizeClasses} ${
           hasLiked
-            ? 'border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 shadow-xs'
-            : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-850 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300'
+            ? 'bg-rose-950/60 border-rose-500/50 text-rose-300 shadow-xs'
+            : 'bg-[#080B12] border-white/[0.08] text-slate-400 hover:text-white hover:border-white/[0.2]'
         } ${className}`}
       >
-        {/* Heart Icon with animated scale pop on liked state */}
+        {/* ThumbsUp Icon */}
         <span
-          className={`inline-flex transition-transform duration-200 ${
-            hasLiked ? 'scale-110 text-rose-500' : 'text-zinc-400 dark:text-zinc-500 group-hover:text-rose-400'
+          className={`inline-flex transition-transform duration-150 ${
+            hasLiked ? 'scale-110 text-rose-400' : 'text-slate-400 group-hover:text-white'
           }`}
         >
           {hasLiked ? (
             <svg
-              className={iconSize}
+              className={`${iconSize} fill-rose-400 text-rose-400`}
+              viewBox="0 0 24 24"
               fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
             >
-              <path
-                fillRule="evenodd"
-                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                clipRule="evenodd"
-              />
+              <path d="M2 20h2c.55 0 1-.45 1-1v-9c0-.55-.45-1-1-1H2v11zm19.83-7.12c.11-.25.17-.52.17-.8 0-1.1-.9-2-2-2h-5.5l.92-4.65c.05-.22.02-.46-.08-.66-.23-.45-.52-.86-.88-1.22L14 3 7.59 9.41C7.21 9.79 7 10.3 7 10.83V19c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2c0-.04-.01-.08-.01-.12z" />
             </svg>
           ) : (
             <svg
@@ -205,12 +200,11 @@ export function LikeButton({
               stroke="currentColor"
               strokeWidth={2}
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
               />
             </svg>
           )}
@@ -219,8 +213,8 @@ export function LikeButton({
         {/* Like Count */}
         <span
           data-testid={`like-count-${solutionId}`}
-          className={`tabular-nums transition-colors duration-150 ${
-            hasLiked ? 'font-bold text-rose-600 dark:text-rose-400' : 'text-zinc-700 dark:text-zinc-300'
+          className={`tabular-nums font-mono transition-colors duration-150 ${
+            hasLiked ? 'font-semibold text-rose-300' : 'text-slate-300'
           }`}
         >
           {likeCount}

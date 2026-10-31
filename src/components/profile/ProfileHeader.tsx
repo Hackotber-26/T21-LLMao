@@ -15,6 +15,11 @@ export interface ProfileHeaderProps {
     interests?: string[] | null;
     created_at?: string;
   };
+  stats?: {
+    solutionCount: number;
+    problemCount: number;
+    totalLikes?: number;
+  };
   className?: string;
 }
 
@@ -36,7 +41,7 @@ export function formatJoinDate(dateString?: string): string {
   }
 }
 
-export function ProfileHeader({ profile, className = '' }: ProfileHeaderProps) {
+export function ProfileHeader({ profile, stats, className = '' }: ProfileHeaderProps) {
   const [imageError, setImageError] = useState(false);
 
   const {
@@ -59,117 +64,102 @@ export function ProfileHeader({ profile, className = '' }: ProfileHeaderProps) {
   return (
     <section
       aria-label="User Profile Header"
-      className={`relative overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 sm:p-8 shadow-xs ${className}`}
+      className={`card-structured rounded-xl border border-white/[0.08] bg-[#0C1018]/90 backdrop-blur-md p-6 sm:p-7 mb-8 ${className}`}
     >
-      {/* Decorative gradient header strip */}
-      <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
-
-      <div className="flex flex-col sm:flex-row items-start gap-6">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
         {/* Avatar with fallback */}
-        <div className="relative flex h-24 w-24 sm:h-28 sm:w-28 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-bold text-2xl sm:text-3xl shadow-md border-2 border-white dark:border-zinc-800">
+        <div className="w-16 h-16 rounded-xl bg-[#080B12] border border-white/[0.1] flex items-center justify-center text-rose-400 shrink-0 overflow-hidden relative">
           {avatar_url && !imageError ? (
             <Image
               src={avatar_url}
               alt={displayName}
               fill
-              sizes="(max-width: 640px) 96px, 112px"
+              sizes="64px"
               unoptimized
               className="object-cover"
               onError={() => setImageError(true)}
             />
+          ) : initials ? (
+            <span className="font-semibold text-lg">{initials}</span>
           ) : (
-            <span>{initials}</span>
+            <svg className="w-8 h-8 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
           )}
         </div>
 
         {/* User Identity Details */}
-        <div className="flex-1 min-w-0 space-y-3">
-          <div>
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-                {displayName}
-              </h1>
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                </svg>
-                Community Member
-              </span>
-            </div>
-
-            <p className="mt-0.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
-              @{username}
-            </p>
-          </div>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xl sm:text-2xl font-semibold text-white mb-0.5">
+            {displayName}
+          </h1>
+          <p className="text-xs text-rose-400 font-mono mb-2">@{username}</p>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed mb-3">
+            {bio?.trim() || 'Active contributor and problem solver on Solvyn.'}
+          </p>
 
           {/* Member since metadata */}
-          <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-            <svg className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-slate-500 font-mono mb-3">
+            <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <span>Joined {joinedDate}</span>
           </div>
 
-          {/* Bio statement */}
-          {bio && bio.trim().length > 0 ? (
-            <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 whitespace-pre-line pt-1">
-              {bio.trim()}
-            </p>
-          ) : (
-            <p className="text-sm italic text-zinc-400 dark:text-zinc-500 pt-1">
-              No bio provided yet.
-            </p>
+          {/* Skills */}
+          {validSkills.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
+              {validSkills.map((skill, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-0.5 rounded text-[11px] font-mono bg-[#080B12] border border-white/[0.08] text-slate-300"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
           )}
 
-          {/* Skills and Interests Badges */}
-          {(validSkills.length > 0 || validInterests.length > 0) && (
-            <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
-              {/* Skills */}
-              {validSkills.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-1.5">
-                    <svg className="h-3.5 w-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                    <span>Skills</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {validSkills.map((skill, index) => (
-                      <span
-                        key={`${skill}-${index}`}
-                        className="inline-flex items-center rounded-lg bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/50"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Interests */}
-              {validInterests.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-1.5">
-                    <svg className="h-3.5 w-3.5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                    <span>Interests</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {validInterests.map((interest, index) => (
-                      <span
-                        key={`${interest}-${index}`}
-                        className="inline-flex items-center rounded-lg bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700"
-                      >
-                        {interest}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+          {/* Interests */}
+          {validInterests.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 mt-2">
+              {validInterests.map((interest, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.03] border border-white/[0.06] text-slate-400"
+                >
+                  #{interest}
+                </span>
+              ))}
             </div>
           )}
         </div>
+
+        {/* Stats Badges if provided */}
+        {stats && (
+          <div className="flex sm:flex-col gap-2.5 shrink-0">
+            <div className="px-3.5 py-2 rounded-lg border border-white/[0.08] bg-[#080B12] text-center min-w-[5rem]">
+              <span className="block text-lg font-semibold text-white">
+                {stats.problemCount ?? 0}
+              </span>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider">Reported</span>
+            </div>
+            <div className="px-3.5 py-2 rounded-lg border border-white/[0.08] bg-[#080B12] text-center min-w-[5rem]">
+              <span className="block text-lg font-semibold text-white">
+                {stats.solutionCount ?? 0}
+              </span>
+              <span className="text-[10px] text-rose-400 uppercase tracking-wider">Solutions</span>
+            </div>
+            {typeof stats.totalLikes === 'number' && stats.totalLikes > 0 && (
+              <div className="px-3.5 py-2 rounded-lg border border-rose-800/40 bg-rose-950/20 text-center min-w-[5rem]">
+                <span className="block text-lg font-semibold text-rose-300">
+                  {stats.totalLikes}
+                </span>
+                <span className="text-[10px] text-rose-400 uppercase tracking-wider">Upvotes</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

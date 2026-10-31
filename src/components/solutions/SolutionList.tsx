@@ -101,32 +101,27 @@ export function SolutionList({
   // Loading State with Skeleton Cards
   if (isLoading) {
     return (
-      <div className={`space-y-6 ${className}`} aria-label="Loading solutions">
-        <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
-          <div className="h-6 w-36 bg-zinc-200 dark:bg-zinc-800 rounded-md animate-pulse" />
-          <div className="h-8 w-48 bg-zinc-200 dark:bg-zinc-800 rounded-lg animate-pulse" />
+      <div className={`space-y-4 ${className}`} aria-label="Loading solutions">
+        <div className="flex items-center justify-between pb-2">
+          <div className="h-5 w-40 bg-white/[0.06] rounded-md animate-pulse" />
+          <div className="h-7 w-24 bg-white/[0.06] rounded-md animate-pulse" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-3.5">
           {[1, 2].map((n) => (
             <div
               key={n}
-              className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-xs animate-pulse space-y-4"
+              className="card-structured rounded-xl border border-white/[0.08] bg-[#0C1018]/90 p-5 space-y-3 animate-pulse"
             >
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+                <div className="h-9 w-9 rounded-lg bg-white/[0.06]" />
                 <div className="space-y-1.5 flex-1">
-                  <div className="h-4 w-28 bg-zinc-200 dark:bg-zinc-800 rounded-sm" />
-                  <div className="h-3 w-40 bg-zinc-100 dark:bg-zinc-800/60 rounded-sm" />
+                  <div className="h-4 w-36 bg-white/[0.06] rounded-sm" />
+                  <div className="h-3 w-48 bg-white/[0.04] rounded-sm" />
                 </div>
               </div>
-              <div className="h-5 w-3/4 bg-zinc-200 dark:bg-zinc-800 rounded-sm" />
-              <div className="space-y-2">
-                <div className="h-3.5 w-full bg-zinc-100 dark:bg-zinc-800/60 rounded-sm" />
-                <div className="h-3.5 w-5/6 bg-zinc-100 dark:bg-zinc-800/60 rounded-sm" />
-              </div>
-              <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex gap-2">
-                <div className="h-6 w-20 bg-zinc-100 dark:bg-zinc-800/60 rounded-md" />
-                <div className="h-6 w-20 bg-zinc-100 dark:bg-zinc-800/60 rounded-md" />
+              <div className="space-y-2 pt-1">
+                <div className="h-3 w-full bg-white/[0.04] rounded-sm" />
+                <div className="h-3 w-5/6 bg-white/[0.04] rounded-sm" />
               </div>
             </div>
           ))}
@@ -139,23 +134,13 @@ export function SolutionList({
   if (errorMessage) {
     return (
       <div
-        className={`rounded-2xl border border-rose-200 dark:border-rose-900/40 bg-rose-50/50 dark:bg-rose-950/20 p-8 text-center ${className}`}
+        className={`card-structured rounded-xl border border-rose-800/40 bg-rose-950/20 p-6 text-center ${className}`}
         role="alert"
       >
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400">
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-        </div>
-        <h3 className="text-base font-semibold text-rose-900 dark:text-rose-200">
+        <h3 className="text-sm font-semibold text-rose-300">
           Failed to load solutions
         </h3>
-        <p className="mt-1 text-xs text-rose-700 dark:text-rose-300">
+        <p className="mt-1 text-xs text-rose-400/80">
           {errorMessage}
         </p>
         {problemId && (
@@ -178,11 +163,8 @@ export function SolutionList({
                   .finally(() => setIsLoading(false));
               }
             }}
-            className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-xs font-medium text-white hover:bg-rose-700 transition"
+            className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-rose-600 hover:bg-rose-700 text-xs font-medium text-white transition-colors"
           >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
             Try Again
           </button>
         )}
@@ -194,35 +176,23 @@ export function SolutionList({
   if (!solutions || solutions.length === 0) {
     return (
       <div
-        className={`rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 p-10 text-center ${className}`}
+        className={`card-structured rounded-xl border border-dashed border-white/[0.1] bg-[#0C1018]/60 p-8 text-center space-y-2 ${className}`}
       >
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500">
-          <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-            />
-          </svg>
-        </div>
-        <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
-          No solutions submitted yet
-        </h3>
-        <p className="mx-auto mt-1 max-w-sm text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+        <svg className="w-7 h-7 text-slate-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
+        </svg>
+        <h3 className="text-sm font-semibold text-white">No solutions submitted yet</h3>
+        <p className="text-xs text-slate-400 max-w-sm mx-auto">
           {problemTitle
-            ? `Be the first builder to propose an architecture or repository for "${problemTitle}".`
-            : 'Be the first developer to propose an implementation for this challenge.'}
+            ? `Be the first engineer or team to propose an open-source solution or prototype for "${problemTitle}".`
+            : 'Be the first engineer or team to propose an open-source solution or prototype for this cluster.'}
         </p>
         {problemId && (
-          <div className="mt-6">
+          <div className="pt-2">
             <Link
               href={`/problems/${problemId}/submit`}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-emerald-700 transition"
+              className="btn-primary inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#E11D48] hover:bg-[#BE123C] text-white text-xs font-semibold rounded-lg border border-white/20 transition-all shadow-sm"
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
               Submit the First Solution
             </Link>
           </div>
@@ -233,61 +203,72 @@ export function SolutionList({
 
   // Active Grid of Solutions
   return (
-    <section className={`space-y-6 ${className}`} aria-label="Solutions">
+    <section className={`space-y-4 ${className}`} aria-label="Solutions">
       {/* List Header with Count & Sort Controls */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-            <span>Community Solutions</span>
-            <span className="rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/50 dark:border-emerald-800/40 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
-              {solutions.length}
-            </span>
-          </h3>
-          <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
-            Open-source implementations, prototypes, and architecture designs.
+          <h2 className="text-base font-semibold text-white flex items-center gap-2">
+            <svg className="w-4 h-4 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
+            </svg>
+            <span>Submitted Solutions ({solutions.length})</span>
+          </h2>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Working codebases and live implementations built for this cluster.
           </p>
         </div>
 
-        {/* Sort Controls */}
-        <div className="flex items-center gap-1.5 self-start sm:self-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/80 p-1 text-xs">
-          <button
-            type="button"
-            onClick={() => setSortBy('most_liked')}
-            className={`rounded-lg px-2.5 py-1 font-medium transition ${
-              sortBy === 'most_liked'
-                ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-            }`}
-          >
-            Top Upvoted
-          </button>
-          <button
-            type="button"
-            onClick={() => setSortBy('newest')}
-            className={`rounded-lg px-2.5 py-1 font-medium transition ${
-              sortBy === 'newest'
-                ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-            }`}
-          >
-            Newest
-          </button>
-          <button
-            type="button"
-            onClick={() => setSortBy('oldest')}
-            className={`rounded-lg px-2.5 py-1 font-medium transition ${
-              sortBy === 'oldest'
-                ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-            }`}
-          >
-            Oldest
-          </button>
+        <div className="flex items-center gap-2">
+          {/* Sort Controls */}
+          <div className="flex items-center gap-1 rounded-lg border border-white/[0.08] bg-[#080B12] p-1 text-xs">
+            <button
+              type="button"
+              onClick={() => setSortBy('most_liked')}
+              className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+                sortBy === 'most_liked'
+                  ? 'bg-rose-950/60 border border-rose-800/40 text-rose-300 font-semibold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Top Upvoted
+            </button>
+            <button
+              type="button"
+              onClick={() => setSortBy('newest')}
+              className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+                sortBy === 'newest'
+                  ? 'bg-rose-950/60 border border-rose-800/40 text-rose-300 font-semibold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Newest
+            </button>
+            <button
+              type="button"
+              onClick={() => setSortBy('oldest')}
+              className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+                sortBy === 'oldest'
+                  ? 'bg-rose-950/60 border border-rose-800/40 text-rose-300 font-semibold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Oldest
+            </button>
+          </div>
+
+          {problemId && (
+            <Link
+              href={`/problems/${problemId}/submit`}
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-md bg-rose-600 hover:bg-rose-700 text-white transition-colors shrink-0"
+            >
+              + Add Solution
+            </Link>
+          )}
         </div>
       </div>
 
-      {/* Grid of Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Stack of Cards */}
+      <div className="space-y-3.5">
         {sortedSolutions.map((solution) => (
           <SolutionCard
             key={solution.id}
