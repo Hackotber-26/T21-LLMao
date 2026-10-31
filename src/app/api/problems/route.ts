@@ -9,7 +9,8 @@ import { successResponse, errorResponse } from '@/lib/utils/response';
  */
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const url = new URL(request.url);
+    const searchParams = url.searchParams;
 
     const parseResult = ProblemQuerySchema.safeParse({
       q: searchParams.get('q') || undefined,

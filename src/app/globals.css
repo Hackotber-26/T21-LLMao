@@ -1,26 +1,99 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #06080F;
+  --foreground: #F1F5F9;
+  --card-bg: rgba(13, 17, 28, 0.75);
+  --card-border: rgba(255, 255, 255, 0.08);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Custom scrollbar for modern sleek look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #06080F;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Ribbed-glass fluting effect */
+.ribbed-glass-overlay {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.035) 0px,
+    rgba(255, 255, 255, 0.035) 1px,
+    transparent 1px,
+    transparent 10px,
+    rgba(0, 0, 0, 0.25) 10px,
+    rgba(0, 0, 0, 0.25) 11px
+  );
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Narrow flowing gradient band keyframe animations */
+@keyframes flowRibbon {
+  0% {
+    transform: translate3d(-15%, -10%, 0) rotate(-18deg) scale(1.05);
+  }
+  25% {
+    transform: translate3d(5%, 10%, 0) rotate(-14deg) scale(1.15);
+  }
+  50% {
+    transform: translate3d(20%, -5%, 0) rotate(-22deg) scale(1.1);
+  }
+  75% {
+    transform: translate3d(-5%, 15%, 0) rotate(-16deg) scale(1.18);
+  }
+  100% {
+    transform: translate3d(-15%, -10%, 0) rotate(-18deg) scale(1.05);
+  }
+}
+
+@keyframes flowPulse {
+  0%, 100% {
+    opacity: 0.72;
+    filter: blur(48px) saturate(140%);
+  }
+  50% {
+    opacity: 0.92;
+    filter: blur(38px) saturate(160%);
+  }
+}
+
+.animate-ribbon {
+  animation: flowRibbon 24s ease-in-out infinite, flowPulse 12s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ribbon {
+    animation: none !important;
+    transform: translate3d(0, 0, 0) rotate(-18deg) scale(1.1) !important;
+    opacity: 0.8 !important;
+  }
 }
