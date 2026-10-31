@@ -102,25 +102,54 @@ export function SolutionCard({
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             {/* Solver Profile Avatar with Fallback */}
-            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-semibold text-xs shadow-xs">
-              {solver?.avatar_url ? (
-                <Image
-                  src={solver.avatar_url}
-                  alt={solverName}
-                  fill
-                  sizes="40px"
-                  className="object-cover"
-                />
-              ) : (
-                <span>{initials}</span>
-              )}
-            </div>
+            {solver?.username ? (
+              <Link
+                href={`/profile/${solver.username}`}
+                className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-semibold text-xs shadow-xs hover:opacity-90 transition-opacity"
+                aria-label={`View ${solverName}'s profile`}
+              >
+                {solver?.avatar_url ? (
+                  <Image
+                    src={solver.avatar_url}
+                    alt={solverName}
+                    fill
+                    sizes="40px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <span>{initials}</span>
+                )}
+              </Link>
+            ) : (
+              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-semibold text-xs shadow-xs">
+                {solver?.avatar_url ? (
+                  <Image
+                    src={solver.avatar_url}
+                    alt={solverName}
+                    fill
+                    sizes="40px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <span>{initials}</span>
+                )}
+              </div>
+            )}
 
             {/* Solver Name & Handle */}
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                {solverName}
-              </p>
+              {solver?.username ? (
+                <Link
+                  href={`/profile/${solver.username}`}
+                  className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:text-emerald-600 dark:hover:text-emerald-400 hover:underline transition-colors block"
+                >
+                  {solverName}
+                </Link>
+              ) : (
+                <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                  {solverName}
+                </p>
+              )}
               <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
                 {solverHandle ? (
                   <span>{solverHandle}</span>
