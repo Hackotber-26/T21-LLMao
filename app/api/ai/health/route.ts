@@ -30,3 +30,4 @@ export async function GET() {
     mode: config.isAiEnabled ? 'Groq AI Live' : 'Deterministic Fallback Active',
   });
 }
+

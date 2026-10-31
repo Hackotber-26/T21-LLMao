@@ -154,3 +154,4 @@ export async function generateStructuredProblem(
     return fallbackGenerateStructuredProblem(cluster, reports);
   }
 }
+
